@@ -18,177 +18,109 @@ window.MathJax = {
 {% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    <!-- Overview -->
-    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
-        <div class="px-4 py-5 sm:px-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900">🧠 Welcome to My Beautiful Mind</h3>
-            <p class="mt-1 max-w-2xl text-sm text-gray-500">
-                Just a Rutgers grad who taught himself enough math and coding to make the bookies sweat. Yeah, I'm still surprised this actually works too.
-            </p>
-        </div>
-        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
-            <div class="prose max-w-none">
-                <h4>TL;DR for the Attention-Challenged</h4>
-                <p>Look, I'm not some fancy theoretical physicist - I'm just a guy who got really good at spotting patterns in sports betting. While everyone else was chasing parlays, I was building algorithms in my spare time. Now we've got some seriously smart code doing the heavy lifting while we chill and watch the games. It's like having a calculator that prints money. 🤓</p>
-                
-                <h4 class="mt-8">Core Metrics (The Actually Important Stuff)</h4>
-                <div class="grid grid-cols-1 gap-6 mt-4">
-                    <div>
-                        <h5 class="font-medium">Expected Value (EV%) - The "Are We Getting Rich?" Number</h5>
-                        <p class="text-sm text-gray-600">Think of EV% as your personal money GPS. Except instead of telling you to turn left in 500 feet, it tells you when bookies have messed up their math. Their loss, our gain. 🎯</p>
-                        <div class="mt-2 flex gap-2">
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-green-200 text-green-900">God Mode: ≥10%</span>
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-lime-200 text-lime-900">Pretty Lit: 5-10%</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h5 class="font-medium">Edge - When Reality Starts Making Sense</h5>
-                        <p class="text-sm text-gray-600">You ever look at something so long the patterns start emerging? That's me with betting odds at 3am. When the algorithms spot something the market missed, that's when we eat. Time to get paid. 🎯</p>
-                        <div class="mt-2 flex gap-2">
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-violet-200 text-violet-900">Pure Gold: ≥5%</span>
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-fuchsia-200 text-fuchsia-900">Cash Money: 2.5-5%</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h5 class="font-medium">Time Categories - Because Timing is Everything</h5>
-                        <p class="text-sm text-gray-600">The dashboard color-codes time to events to help you prioritize your betting. Different time windows offer different advantages - early for value, late for urgency. 🌌</p>
-                        <div class="mt-2 flex gap-2">
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-green-200 text-green-800">Early: >12h</span>
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-yellow-200 text-yellow-800">Mid: 6-12h</span>
-                            <span class="px-2 py-1 text-sm font-semibold rounded-full bg-red-200 text-red-800">Late: <6h</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h5 class="font-medium">The Grading Algorithm - Not Your High School Report Card (This One Actually Matters)</h5>
-                        <p class="text-sm text-gray-600">We grade bets like my old Calc professor at Rutgers - tough but fair, and always with a method to the madness. 🎓</p>
-                        <div class="mt-4 space-y-2">
-                            <div class="flex items-center">
-                                <span class="px-2 py-1 text-sm font-semibold rounded-full bg-green-200 text-green-900 w-8 text-center mr-2">A</span>
-                                <span class="text-sm text-gray-600">Galaxy Brain (90+ Score) - When the numbers are so good they make my laptop fans spin 🌟</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="px-2 py-1 text-sm font-semibold rounded-full bg-blue-200 text-blue-900 w-8 text-center mr-2">B</span>
-                                <span class="text-sm text-gray-600">Big Brain (80-89 Score) - The math is chef's kiss 👨‍🍳</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="px-2 py-1 text-sm font-semibold rounded-full bg-purple-200 text-purple-900 w-8 text-center mr-2">C</span>
-                                <span class="text-sm text-gray-600">Cosmic Brain (70-79 Score) - For when you're feeling spicy 🌶️</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="px-2 py-1 text-sm font-semibold rounded-full bg-orange-200 text-orange-900 w-8 text-center mr-2">D</span>
-                                <span class="text-sm text-gray-600">Smooth Brain (65-69 Score) - The algorithms are questioning your life choices 🤔</span>
-                            </div>
-                            <div class="flex items-center">
-                                <span class="px-2 py-1 text-sm font-semibold rounded-full bg-gray-200 text-gray-900 w-8 text-center mr-2">F</span>
-                                <span class="text-sm text-gray-600">Full Degen (<65 Score) - Even the random number generator is judging you 🎲</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Opportunity Tracking Section -->
-                    <div>
-                        <h5 class="font-medium">Opportunity Tracking & Analysis 🔬</h5>
-                        <p class="text-sm text-gray-600">Because throwing darts at a board is fun and all, but I prefer making money.</p>
-                        <div class="mt-4 space-y-2 bg-blue-50 p-4 rounded-lg">
-                            <h6 class="font-medium text-blue-900">Current Features:</h6>
-                            <ul class="list-disc list-inside text-sm text-blue-800 space-y-1">
-                                <li>Real-time odds tracking and analysis</li>
-                                <li>Precision bet tracking with detailed metrics</li>
-                                <li>Smart grade distribution visualization</li>
-                                <li>Time-to-event color coding for quick decision making</li>
-                                <li>Detailed bet information with EV and edge calculations</li>
-                                <li>Sportsbook distribution tracking</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Parlay Calculator Section -->
-                    <div>
-                        <h5 class="font-medium">Parlay Calculator 🧮</h5>
-                        <p class="text-sm text-gray-600">Because sometimes one bet just isn't enough chaos for your life.</p>
-                        <div class="mt-4 space-y-2 bg-blue-50 p-4 rounded-lg">
-                            <h6 class="font-medium text-blue-900">Features:</h6>
-                            <ul class="list-disc list-inside text-sm text-blue-800 space-y-1">
-                                <li>Correlation warnings to identify potentially related bets</li>
-                                <li>True win probability calculations for accurate assessment</li>
-                                <li>Expected value calculations that account for multiple legs</li>
-                                <li>Kelly criterion for optimal bet sizing</li>
-                                <li>Edge calculations to identify value opportunities</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <h4 class="mt-8">The Math Behind the Madness</h4>
-                <div class="mt-4 space-y-4">
-                    <div>
-                        <h5 class="font-medium">Kelly Criterion - The Formula That Keeps Your Account Alive</h5>
-                        <p class="text-sm text-gray-600">Here's the formula I learned about in a random Reddit thread that changed everything: 
-                        $$K = \frac{p(b-1) - (1-p)}{b-1}$$ 
-                        where $p$ is win probability and $b$ is decimal odds. We use Quarter Kelly because I've blown up enough accounts in my testing to know better. Fun fact: this formula was originally used for phone lines, which is pretty wild considering we're using it to get paid. 📞</p>
-                    </div>
-
-                    <div>
-                        <h5 class="font-medium">Market Implied Probability - What the Odds Actually Mean</h5>
-                        <p class="text-sm text-gray-600">Converting odds to real probabilities, because someone had to figure this out:
-                        <br>For positive odds: $$P_{implied} = \frac{100}{odds + 100}$$
-                        <br>For negative odds: $$P_{implied} = \frac{|odds|}{|odds| + 100}$$
-                        <br>When these don't match what my code says, that's when we find the good stuff. 🎯</p>
-                    </div>
-
-                    <div>
-                        <h5 class="font-medium">The Composite Score - My Special Recipe</h5>
-                        <p class="text-sm text-gray-600">After way too many late nights and energy drinks, here's what I came up with:</p>
-                        <div class="mt-2 bg-gray-50 p-4 rounded-lg">
-                            <p class="text-sm font-mono">$$Score = 0.55 \times EV_{score} + 0.30 \times Edge_{score} + 0.15 \times Time_{score}$$</p>
-                            <ul class="mt-4 text-sm text-gray-600 space-y-2">
-                                <li>$EV_{score}$: Because we like money $$EV_{score} = (EV\% + 10) \times 5$$</li>
-                                <li>$Edge_{score}$: Our "we found something good" metric $$Edge_{score} = (Edge\% + 10) \times 5$$</li>
-                                <li>$Time_{score}$: Because timing is everything $$Time_{score} = \text{Based on time until event}$$</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <h4 class="mt-8">Pro Tips from Your Friendly Neighborhood Quant</h4>
-                <ul class="mt-4 list-disc pl-5 space-y-2 text-sm text-gray-600">
-                    <li>Our grading system focuses on EV (55%), Edge (30%), and Time (15%) for a comprehensive assessment.</li>
-                    <li>Quarter Kelly is still a good rule of thumb for bet sizing, even though it's no longer part of our grade calculation.</li>
-                    <li>Early betting (>12h) often provides the best value before the market adjusts.</li>
-                    <li>Even A-grade bets lose sometimes. That's not a bug, it's a feature of reality. Embrace the chaos.</li>
-                    <li>Pay attention to the time color coding - red means you need to act quickly!</li>
-                    <li>The rankings page sorts opportunities by priority, helping you focus on the best bets first.</li>
-                    <li>Check the grade distribution to get a quick overview of the current betting landscape.</li>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-6">Bet Grading System Explained</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Grade Components</h2>
+        <div class="space-y-4">
+            <div class="border-l-4 border-blue-500 pl-4">
+                <h3 class="text-xl font-medium mb-2">Composite Score Breakdown</h3>
+                <ul class="list-disc ml-6 space-y-2">
+                    <li>Expected Value (EV) Score: 55%</li>
+                    <li>Timing Score: 15%</li>
+                    <li>EV Trend Score: 15%</li>
+                    <li>Bayesian Confidence: 15%</li>
                 </ul>
-
-                <!-- How We Know It Works Section -->
-                <div class="mt-8 bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-lg">
-                    <h4 class="font-medium text-gray-900 mb-4">How Do We Know This Actually Works? 🎯</h4>
-                    <p class="text-sm text-gray-600 mb-4">
-                        Look, you don't have to take my word for it - just ask the major books who now limit me to coffee money max bets. When the house doesn't want your action anymore, you know you're doing something right. 
-                    </p>
-                    <p class="text-sm text-gray-600 mb-4">
-                        But hey, there's always another way. Now we're just cruising through spots they haven't figured out yet. While they're playing checkers, we've been playing chess this whole time.
-                    </p>
-                    <div class="text-xs text-gray-500 mt-2">
-                        Pro Tip: Keep your wins quiet and your methods quieter. The best edges are the ones nobody knows about. 🤫
-                    </div>
-                </div>
-
-                <!-- The Genius at Work GIF -->
-                <div class="mt-12 flex flex-col items-center text-center">
-                    <img src="https://media0.giphy.com/media/C1dmtEuMtJqMg/200w.gif" 
-                         alt="I know kung fu" 
-                         class="rounded-lg shadow-lg"
-                         width="200">
-                    <p class="mt-4 text-sm text-gray-500 italic">Me at 3am, creating a sports betting algorithm that literally prints money while the rest of you normies sleep. Just another casual night of pure genius. Sometimes the best ideas come when you're... let's say... deeply contemplating the universe. 🌌✨</p>
-                </div>
+                <p class="mt-4 text-sm text-gray-600">
+                    The grading system prioritizes Expected Value (EV) as the primary indicator of bet quality, 
+                    while considering timing, trend analysis, and Bayesian confidence to provide a comprehensive assessment.
+                </p>
             </div>
         </div>
     </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Bayesian Confidence</h2>
+        <div class="space-y-4">
+            <p class="text-gray-700">
+                Bayesian confidence is calculated by considering multiple factors:
+            </p>
+            <ul class="list-disc ml-6 space-y-2">
+                <li>Initial EV as prior probability</li>
+                <li>EV change over time:
+                    <ul class="list-circle ml-6 mt-2">
+                        <li>Positive changes: 0.5x multiplier (small boost)</li>
+                        <li>Negative changes: 1.0x multiplier (larger penalty)</li>
+                    </ul>
+                </li>
+                <li>Time-based adjustments:
+                    <ul class="list-circle ml-6 mt-2">
+                        <li>Early improvements (>20hrs): 5% boost</li>
+                        <li>Late-stage changes (<3hrs):
+                            <ul class="list-square ml-6 mt-2">
+                                <li>Positive/Stable: 10% boost</li>
+                                <li>Negative: 50% penalty</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>Long-term stability bonus:
+                    <ul class="list-circle ml-6 mt-2">
+                        <li>5% boost for bets stable over 12+ hours</li>
+                        <li>Applies only if EV change < 10%</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Bell Curve Grading</h2>
+        <div class="space-y-4">
+            <p class="text-gray-700">
+                Grades are assigned using a bell curve distribution based on the last 10,000 bets:
+            </p>
+            <ul class="list-disc ml-6 space-y-2">
+                <li>A: Top 2.5% (z-score ≥ 2.0)</li>
+                <li>B: Next 13.5% (1.0 ≤ z-score < 2.0)</li>
+                <li>C: Middle 68% (-1.0 < z-score < 1.0)</li>
+                <li>D: Next 13.5% (-2.0 < z-score ≤ -1.0)</li>
+                <li>F: Bottom 2.5% (z-score ≤ -2.0)</li>
+            </ul>
+            <div class="mt-4">
+                <h3 class="text-xl font-medium mb-2">EV Override Rules</h3>
+                <ul class="list-disc ml-6 space-y-2">
+                    <li>EV ≥ 20%: Cap at 'C' (suspicious high EV)</li>
+                    <li>EV ≥ 10%: Minimum grade 'A'</li>
+                    <li>EV ≥ 5%: Minimum grade 'B'</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-semibold mb-4">Distribution Statistics</h2>
+        <div class="space-y-4">
+            <p class="text-gray-700">
+                The grading system maintains rolling statistics:
+            </p>
+            <ul class="list-disc ml-6 space-y-2">
+                <li>Uses last 10,000 bets for distribution</li>
+                <li>Trims top and bottom 2.5% to remove outliers</li>
+                <li>Updates every hour to maintain accuracy</li>
+                <li>Falls back to absolute grading if distribution data unavailable</li>
+            </ul>
+        </div>
+    </div>
 </div>
+
+<style>
+    .list-circle {
+        list-style-type: circle;
+    }
+    .list-square {
+        list-style-type: square;
+    }
+</style>
 {% endblock %} 

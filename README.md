@@ -1,12 +1,19 @@
 # Grade Dashboard
 
-A Flask web application for tracking and analyzing betting opportunities with a focus on expected value (EV) and edge.
+A Flask web application for tracking and analyzing betting opportunities with a focus on expected value (EV) and Bayesian confidence scoring.
 
 ## Features
 
 - Dashboard for viewing active betting opportunities
-- Grading system for evaluating bet quality (A-F grades based on composite scores)
-- Time-to-event color coding (green for >12h, yellow for 6-12h, red for <6h)
+- Statistical grading system using bell curve distribution
+- Initial bet details tracking for EV change analysis
+- Bayesian confidence scoring with time-aware adjustments
+- Time-to-event color coding:
+  - Red: <1h (Immediate action needed)
+  - Orange: 1-3h (Very urgent)
+  - Yellow: 3-6h (Urgent)
+  - Blue: 6-12h (Monitor)
+  - Green: >12h (Plan ahead)
 - Sportsbook distribution tracking
 - Rankings page for prioritized betting opportunities
 - Explainer page with detailed information about the grading system
@@ -101,16 +108,22 @@ The application will be available at http://localhost:5000.
 
 ## Grading System
 
-Bets are graded on a scale from A to F based on a composite score:
-- A: 90+ (Galaxy Brain)
-- B: 80-89 (Big Brain)
-- C: 70-79 (Cosmic Brain)
-- D: 65-69 (Smooth Brain)
-- F: <65 (Full Degen)
+Bets are graded on a bell curve distribution based on Bayesian confidence scores from the last 10,000 bets:
+- A: Top 2.5% (Exceptional Value)
+- B: Next 13.5% (Strong Value)
+- C: Middle 68% (Fair Value)
+- D: Next 13.5% (Weak Value)
+- F: Bottom 2.5% (Poor Value)
 
-The composite score is calculated as:
-```
-Score = 0.55 × EV_score + 0.30 × Edge_score + 0.15 × Time_score
-```
+The grading system incorporates:
+1. Current Expected Value (55% weight)
+2. EV Change from Initial Odds
+3. Bayesian Confidence Score
+4. Time Until Event
+
+Bayesian confidence is calculated using:
+- EV changes since the bet was first seen
+- Time remaining until the event starts
+- Asymmetric weighting for EV improvements vs declines
 
 See the Explainer page for more details on the grading methodology.

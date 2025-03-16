@@ -56,6 +56,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in `get_bets_by_sportsbook` method to properly handle the `include_resolved` parameter
 - Improved error handling in betting service methods
 
+## [1.1.0] - 2024-03-17
+
+### Added
+- Initial bet details tracking in new `initial_bet_details` table
+- Bayesian confidence scoring system for bet evaluation
+- Bell curve grading distribution (A: top 2.5%, B: next 13.5%, C: middle 68%, D: next 13.5%, F: bottom 2.5%)
+- Time-aware Bayesian confidence adjustments
+- EV change tracking from initial odds
+
+### Changed
+- Updated grading system to use statistical distribution instead of fixed thresholds
+- Modified UI to show new metrics (EV change, Bayesian confidence)
+- Improved time-based color coding thresholds
+- Updated templates to reflect new grading system
+
+## [1.1.1] - 2024-03-17
+
+### Changed
+- Updated time-to-event categories to be more granular:
+  - Red: <1h (Immediate action needed)
+  - Orange: 1-3h (Very urgent)
+  - Yellow: 3-6h (Urgent)
+  - Blue: 6-12h (Monitor)
+  - Green: >12h (Plan ahead)
+- Reordered time distribution summary from most urgent to least urgent
+
 ## [0.9.0] - 2024-03-15
 
 ### Added

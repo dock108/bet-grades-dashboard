@@ -7,6 +7,8 @@ from flask import Flask
 from flask_caching import Cache
 from app.core.config import get_config
 from app.core.supabase import get_supabase_client
+from flask_cors import CORS
+from app.api.bet_routes import bet_routes
 
 # Initialize extensions
 cache = Cache()
@@ -35,8 +37,7 @@ def create_app(config_class=None):
         from app.admin import bp as admin_bp
         app.register_blueprint(admin_bp)
         
-        from app.api import bp as api_bp
-        app.register_blueprint(api_bp)
+        app.register_blueprint(bet_routes, url_prefix='/api')
 
         # Register error handlers
         @app.errorhandler(404)
@@ -48,4 +49,7 @@ def create_app(config_class=None):
             return {'error': 'Internal server error'}, 500
 
     return app
+
+# Create the application instance
+app = create_app()
 

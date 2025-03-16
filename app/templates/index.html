@@ -58,23 +58,23 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Grades Distribution</h3>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">A (Must Bet)</span>
+                                    <span class="text-sm font-medium text-gray-500">A (Top 2.5%)</span>
                                     <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.get('A', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">B (Should Bet)</span>
+                                    <span class="text-sm font-medium text-gray-500">B (Next 13.5%)</span>
                                     <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.get('B', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">C (Decent if Aggressive)</span>
+                                    <span class="text-sm font-medium text-gray-500">C (Middle 68%)</span>
                                     <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.get('C', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">D (Below Average)</span>
+                                    <span class="text-sm font-medium text-gray-500">D (Next 13.5%)</span>
                                     <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.get('D', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">F (Poor)</span>
+                                    <span class="text-sm font-medium text-gray-500">F (Bottom 2.5%)</span>
                                     <span class="text-sm font-semibold text-gray-600">{{ summary_stats.grade_distribution.get('F', 0) }}</span>
                                 </div>
                             </div>
@@ -102,16 +102,24 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Time Distribution</h3>
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Early (>12h)</span>
-                            <span class="text-sm font-semibold text-green-600">{{ summary_stats.time_distribution.Early if summary_stats.time_distribution else 0 }}</span>
+                            <span class="text-sm font-medium text-gray-500">Immediate (<1h)</span>
+                            <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate if summary_stats.time_distribution else 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Mid (6-12h)</span>
-                            <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Mid if summary_stats.time_distribution else 0 }}</span>
+                            <span class="text-sm font-medium text-gray-500">Very Urgent (1-3h)</span>
+                            <span class="text-sm font-semibold text-orange-600">{{ summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Late (<6h)</span>
-                            <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Late if summary_stats.time_distribution else 0 }}</span>
+                            <span class="text-sm font-medium text-gray-500">Urgent (3-6h)</span>
+                            <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Monitor (6-12h)</span>
+                            <span class="text-sm font-semibold text-blue-600">{{ summary_stats.time_distribution.Monitor if summary_stats.time_distribution else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Plan (>12h)</span>
+                            <span class="text-sm font-semibold text-green-600">{{ summary_stats.time_distribution.Plan if summary_stats.time_distribution else 0 }}</span>
                         </div>
                     </div>
                 </div>
@@ -184,19 +192,9 @@
 
                         <!-- Right Side - Metrics -->
                         <div class="w-3/4 grid grid-cols-4 gap-4">
-                            <!-- Suggested Bet Size -->
-                            <div title="Recommended bet size">
-                                <dt class="text-sm font-medium text-gray-500">Suggested Bet</dt>
-                                <dd class="mt-1">
-                                    <span class="px-2 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-800">
-                                        ${{ "%.0f"|format(bet.bet_size) if bet.bet_size else 0 }}
-                                    </span>
-                                </dd>
-                            </div>
-
                             <!-- EV% -->
-                            <div title="Expected Value - The estimated percentage return on investment for this bet">
-                                <dt class="text-sm font-medium text-gray-500">EV%</dt>
+                            <div title="Expected Value - Primary factor in grading (55% weight)">
+                                <dt class="text-sm font-medium text-gray-500">Current EV</dt>
                                 <dd class="mt-1">
                                     <span class="px-2 py-1 text-sm font-semibold rounded-full
                                         {% if bet.ev_percent and bet.ev_percent >= 10 %}bg-green-200 text-green-900
@@ -207,44 +205,53 @@
                                 </dd>
                             </div>
 
-                            <!-- Edge -->
-                            <div title="Edge - The difference between our calculated win probability and the market implied probability">
-                                <dt class="text-sm font-medium text-gray-500">Edge</dt>
+                            <!-- EV Change -->
+                            {% if bet.grade and bet.grade.ev_change is not none %}
+                            <div title="Change in EV since first seen">
+                                <dt class="text-sm font-medium text-gray-500">EV Change</dt>
                                 <dd class="mt-1">
                                     <span class="px-2 py-1 text-sm font-semibold rounded-full
-                                        {% if bet.edge and bet.edge >= 5 %}bg-violet-200 text-violet-900
-                                        {% elif bet.edge and bet.edge >= 2.5 %}bg-fuchsia-200 text-fuchsia-900
+                                        {% if bet.grade.ev_change > 0 %}bg-green-200 text-green-900
+                                        {% elif bet.grade.ev_change < 0 %}bg-red-200 text-red-900
                                         {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                        {{ "%.2f"|format(bet.edge) if bet.edge else 'N/A' }}%
+                                        {{ '%+.2f'|format(bet.grade.ev_change) }}%
                                     </span>
                                 </dd>
                             </div>
+                            {% endif %}
+
+                            <!-- Bayesian Confidence -->
+                            {% if bet.grade and bet.grade.bayesian_confidence is not none %}
+                            <div title="Confidence score based on EV trends and timing">
+                                <dt class="text-sm font-medium text-gray-500">Confidence</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.grade.bayesian_confidence >= 80 %}bg-green-200 text-green-900
+                                        {% elif bet.grade.bayesian_confidence >= 60 %}bg-blue-200 text-blue-900
+                                        {% elif bet.grade.bayesian_confidence >= 40 %}bg-yellow-200 text-yellow-900
+                                        {% else %}bg-red-200 text-red-900{% endif %}">
+                                        {{ "%.1f"|format(bet.grade.bayesian_confidence) }}%
+                                    </span>
+                                </dd>
+                            </div>
+                            {% endif %}
 
                             <!-- Time -->
-                            <div title="Time until the event starts - Early: >12h, Mid: 6-12h, Late: <6h">
-                                <dt class="text-sm font-medium text-gray-500">Time to Event</dt>
+                            <div title="Time until event - Affects confidence and grading">
+                                <dt class="text-sm font-medium text-gray-500">Time Left</dt>
                                 <dd class="mt-1">
                                     <span class="px-2 py-1 text-sm font-semibold rounded-full 
                                         {% if bet.event_time and now is defined %}
                                             {% if bet.event_time is not string %}
                                                 {% set time_diff = (bet.event_time - now).total_seconds() %}
-                                                {% if time_diff > 43200 %}
-                                                    bg-green-200 text-green-800
-                                                {% elif time_diff > 21600 %}
-                                                    bg-yellow-200 text-yellow-800
-                                                {% elif time_diff > 0 %}
-                                                    bg-red-200 text-red-800
-                                                {% else %}
-                                                    bg-gray-100 text-gray-800
-                                                {% endif %}
+                                                {% if time_diff > 43200 %}bg-green-200 text-green-900
+                                                {% elif time_diff > 21600 %}bg-blue-200 text-blue-900
+                                                {% elif time_diff > 10800 %}bg-yellow-200 text-yellow-900
+                                                {% elif time_diff > 3600 %}bg-orange-200 text-orange-900
+                                                {% elif time_diff > 0 %}bg-red-200 text-red-900
+                                                {% else %}bg-gray-100 text-gray-800{% endif %}
                                             {% else %}
-                                                {% if "2025" in bet.event_time %}
-                                                    bg-green-200 text-green-800
-                                                {% elif "2024" in bet.event_time %}
-                                                    bg-green-200 text-green-800
-                                                {% else %}
-                                                    bg-gray-100 text-gray-800
-                                                {% endif %}
+                                                bg-gray-100 text-gray-800
                                             {% endif %}
                                         {% else %}
                                             bg-gray-100 text-gray-800
@@ -253,24 +260,18 @@
                                             {% if bet.event_time is not string %}
                                                 {% set time_diff = (bet.event_time - now).total_seconds() %}
                                                 {% if time_diff > 86400 %}
-                                                    {{ (time_diff / 86400)|int }} days
+                                                    {{ (time_diff / 86400)|int }}d
                                                 {% elif time_diff > 3600 %}
-                                                    {{ (time_diff / 3600)|int }} hours
+                                                    {{ (time_diff / 3600)|int }}h
                                                 {% elif time_diff > 60 %}
-                                                    {{ (time_diff / 60)|int }} minutes
+                                                    {{ (time_diff / 60)|int }}m
                                                 {% elif time_diff > 0 %}
                                                     Soon
                                                 {% else %}
                                                     Live
                                                 {% endif %}
                                             {% else %}
-                                                {% if "2025" in bet.event_time %}
-                                                    366 days
-                                                {% elif "2024" in bet.event_time %}
-                                                    1 days
-                                                {% else %}
-                                                    Soon
-                                                {% endif %}
+                                                N/A
                                             {% endif %}
                                         {% else %}
                                             N/A

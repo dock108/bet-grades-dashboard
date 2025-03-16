@@ -1,16 +1,17 @@
 """
-Betting service for the application.
-This module provides services for retrieving and processing betting data.
+Betting service layer.
+This module contains business logic for processing and managing bets.
 """
 import logging
 from app.core.database import execute_query
-from app.models.betting import Bet, BetGrade
-from datetime import datetime
+from app.models.bet_models import Bet, BetGrade
+from datetime import datetime, timedelta
+import pytz
 
 logger = logging.getLogger(__name__)
 
 class BettingService:
-    """Service for retrieving and processing betting data."""
+    """Service class for managing betting operations."""
     
     @staticmethod
     def get_active_bets(limit=None, include_grades=True):
@@ -24,6 +25,9 @@ class BettingService:
         Returns:
             list: List of bets sorted by grade.
         """
+        bets = []
+        est = pytz.timezone('America/New_York')
+        
         try:
             # Get most recent timestamp first
             timestamp_result = execute_query(
@@ -53,7 +57,6 @@ class BettingService:
             if result:
                 logger.info(f"Sample bet data: {result[0]}")
             
-            bets = []
             for row in result:
                 try:
                     bet = Bet.from_dict(row)
@@ -64,11 +67,13 @@ class BettingService:
                             # Try different formats for parsing the string
                             try:
                                 # Try the format with seconds
-                                bet.event_time = datetime.strptime(bet.event_time, "%Y-%m-%dT%H:%M:%S")
+                                naive_dt = datetime.strptime(bet.event_time, "%Y-%m-%dT%H:%M:%S")
+                                bet.event_time = est.localize(naive_dt)
                             except ValueError:
                                 try:
                                     # Try the format without seconds
-                                    bet.event_time = datetime.strptime(bet.event_time, "%Y-%m-%d %H:%M")
+                                    naive_dt = datetime.strptime(bet.event_time, "%Y-%m-%d %H:%M")
+                                    bet.event_time = est.localize(naive_dt)
                                 except ValueError:
                                     # If all parsing fails, leave as string
                                     logger.warning(f"Could not parse event_time: {bet.event_time} for bet {bet.bet_id}")
@@ -464,26 +469,32 @@ class BettingService:
         
         # Calculate time distribution (starting with empty distribution)
         time_distribution = empty_stats["time_distribution"].copy()
-        now = datetime.now()
+        est = pytz.timezone('America/New_York')
+        now = datetime.now(est)
         
         for bet in bets:
             if bet.event_time:
                 try:
-                    # Ensure event_time is a datetime
+                    # Ensure event_time is a datetime with timezone
                     event_time = bet.event_time
                     if isinstance(event_time, str):
                         # Try different formats for parsing the string
                         try:
                             # Try the format with seconds
-                            event_time = datetime.strptime(event_time, "%Y-%m-%dT%H:%M:%S")
+                            naive_dt = datetime.strptime(event_time, "%Y-%m-%dT%H:%M:%S")
+                            event_time = est.localize(naive_dt)
                         except ValueError:
                             try:
                                 # Try the format without seconds
-                                event_time = datetime.strptime(event_time, "%Y-%m-%d %H:%M")
+                                naive_dt = datetime.strptime(event_time, "%Y-%m-%d %H:%M")
+                                event_time = est.localize(naive_dt)
                             except ValueError:
                                 # If all parsing fails, log and continue
                                 logger.warning(f"Could not parse event_time: {event_time} for bet {bet.bet_id}")
                                 continue
+                    elif isinstance(event_time, datetime) and event_time.tzinfo is None:
+                        # If it's a naive datetime, localize it
+                        event_time = est.localize(event_time)
                     
                     time_diff = event_time - now
                     hours_until_event = time_diff.total_seconds() / 3600

@@ -26,16 +26,18 @@ grade-dashboard/
 │   ├── __init__.py         # Application factory
 │   ├── admin/              # Admin functionality
 │   ├── api/                # API endpoints
+│   │   ├── __init__.py     # Blueprint initialization
+│   │   └── api_routes.py   # API route handlers
 │   ├── core/               # Core functionality
 │   │   └── database.py     # Database utilities
 │   ├── models/             # Data models
-│   │   └── betting.py      # Betting models
+│   │   └── bet_models.py   # Betting models
 │   ├── services/           # Business logic
-│   │   ├── betting.py      # Betting services
+│   │   ├── bet_service.py  # Betting services
 │   │   └── parlay.py       # Parlay calculation services
 │   ├── main/               # Main blueprint
 │   │   ├── __init__.py     # Blueprint initialization
-│   │   └── routes.py       # Main routes
+│   │   └── main_routes.py  # Main route handlers
 │   ├── static/             # Static assets
 │   └── templates/          # HTML templates
 ├── logs/                   # Application logs

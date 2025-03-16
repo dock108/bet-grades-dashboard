@@ -1,12 +1,13 @@
 """
-Betting data models.
-This module contains models for betting data, grades, and results.
+Data models for betting entities.
+This module contains the core data structures for bets and grades.
 """
 from datetime import datetime
+import pytz
 from app.core.database import execute_query
 
 class Bet:
-    """Model for a betting opportunity."""
+    """Model representing a betting opportunity."""
     
     def __init__(self, id=None, bet_id=None, timestamp=None, ev_percent=None, event_time=None,
                  home_team=None, away_team=None, sport=None, league=None, description=None, participant=None,
@@ -17,7 +18,40 @@ class Bet:
         self.bet_id = bet_id
         self.timestamp = timestamp  # Keep timestamp as is - already in correct timezone
         self.ev_percent = float(ev_percent) if ev_percent is not None else None
-        self.event_time = event_time  # Keep event_time as is - already in correct timezone
+        
+        # Handle event_time with timezone
+        est = pytz.timezone('America/New_York')
+        if event_time:
+            if isinstance(event_time, str):
+                try:
+                    # Try different formats for parsing the string
+                    try:
+                        # Try the format with seconds
+                        naive_dt = datetime.strptime(event_time, "%Y-%m-%dT%H:%M:%S")
+                        self.event_time = est.localize(naive_dt)
+                    except ValueError:
+                        try:
+                            # Try the format without seconds
+                            naive_dt = datetime.strptime(event_time, "%Y-%m-%d %H:%M")
+                            self.event_time = est.localize(naive_dt)
+                        except ValueError:
+                            # If all parsing fails, keep as string
+                            self.event_time = event_time
+                except (ValueError, TypeError):
+                    # If parsing fails, keep as string
+                    self.event_time = event_time
+            elif isinstance(event_time, datetime):
+                if event_time.tzinfo is None:
+                    # If it's a naive datetime, localize it
+                    self.event_time = est.localize(event_time)
+                else:
+                    # If it already has timezone info, keep it as is
+                    self.event_time = event_time
+            else:
+                self.event_time = event_time
+        else:
+            self.event_time = None
+        
         self.home_team = home_team
         self.away_team = away_team
         self.sport = sport
@@ -201,7 +235,7 @@ class Bet:
             raise
 
 class BetGrade:
-    """Model for a bet grade."""
+    """Model representing a grade for a bet."""
     
     def __init__(self, id=None, bet_id=None, grade=None, calculated_at=None, ev_score=None,
                  timing_score=None, historical_edge=None, kelly_score=None, composite_score=None,

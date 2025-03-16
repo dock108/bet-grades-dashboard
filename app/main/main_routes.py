@@ -2,12 +2,13 @@
 Main routes for the application.
 This module contains the routes for the main blueprint.
 """
-from flask import render_template, jsonify
+from flask import Blueprint, render_template, jsonify
 from app.main import bp
-from app.services.betting import BettingService
+from app.services.bet_service import BettingService
 import logging
 from pprint import pformat
 from datetime import datetime
+import pytz
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +27,16 @@ def index():
     try:
         # Get active bets
         active_bets = BettingService.get_active_bets()
+        
+        # Sort bets by composite score
+        def get_sort_key(bet):
+            # Get composite score if available
+            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'composite_score'):
+                score = bet.grade.composite_score
+                return (-score, -(bet.ev_percent or 0))
+            return (0, -(bet.ev_percent or 0))
+        
+        active_bets.sort(key=get_sort_key)
         
         # Get sportsbook counts
         sportsbook_counts = BettingService.get_sportsbook_counts()
@@ -47,8 +58,15 @@ def index():
         logger.info(f"summary_stats keys: {list(summary_stats.keys())}")
         logger.info(f"sportsbook_counts keys: {list(sportsbook_counts.keys())}")
         
-        # Get current time for time difference calculations
-        now = datetime.now()
+        # Get current time in EST for time difference calculations
+        est = pytz.timezone('America/New_York')
+        now = datetime.now(est)
+        
+        # Log the sorted bets
+        logger.info("Sorted bets by composite score:")
+        for bet in active_bets:
+            if hasattr(bet, 'grade') and bet.grade:
+                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
         
         return render_template(
             'index.html',
@@ -68,42 +86,14 @@ def rankings():
         # Get active bets
         active_bets = BettingService.get_active_bets()
         
+        # Get current time in EST for time difference calculations
+        est = pytz.timezone('America/New_York')
+        now = datetime.now(est)
+        
         # Process bets for ranking
         ranked_bets = []
         for bet in active_bets:
             try:
-                # Calculate priority rank based on EV% and edge
-                ev_percent = safe_float(bet.ev_percent)
-                edge = safe_float(bet.edge)
-                
-                # Simple priority rank calculation
-                priority_rank = 0
-                if ev_percent >= 10:
-                    priority_rank += 3
-                elif ev_percent >= 5:
-                    priority_rank += 2
-                elif ev_percent >= 2:
-                    priority_rank += 1
-                
-                if edge >= 5:
-                    priority_rank += 2
-                elif edge >= 2.5:
-                    priority_rank += 1
-                
-                # Add grade bonus
-                if hasattr(bet, 'grade') and bet.grade:
-                    grade_bonus = {
-                        'A': 3,
-                        'B': 2,
-                        'C': 1,
-                        'D': 0,
-                        'F': -1
-                    }
-                    priority_rank += grade_bonus.get(bet.grade.grade, 0)
-                
-                # Set priority rank
-                bet.priority_rank = priority_rank
-                
                 # Ensure event_teams is set
                 if not hasattr(bet, 'event_teams') or not bet.event_teams:
                     # First try to use home_team and away_team
@@ -122,21 +112,35 @@ def rankings():
             except Exception as e:
                 logger.error(f"Error processing bet for ranking: {str(e)}")
                 continue
+
+        # Log initial state
+        logger.info("Before sorting - Composite scores:")
+        for bet in ranked_bets:
+            if hasattr(bet, 'grade') and bet.grade:
+                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
+
+        # Sort by composite score (if available), then EV%
+        def get_sort_key(bet):
+            # Get composite score if available
+            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'composite_score'):
+                score = bet.grade.composite_score
+                # Log the actual score being used for sorting
+                logger.info(f"Sort key for {bet.participant}: Using score {score}")
+                return (-score, -(bet.ev_percent or 0))
+            return (0, -(bet.ev_percent or 0))
         
-        # Sort by priority rank, then EV%, then odds multiplier
-        ranked_bets.sort(key=lambda x: (
-            -(x.priority_rank or 0),  # Descending priority rank
-            -(x.ev_percent or 0),     # Descending EV%
-            -(getattr(x, 'odds_multiplier', 0) or 0)  # Descending odds multiplier
-        ))
+        ranked_bets.sort(key=get_sort_key)
+        
+        # Log sorted state
+        logger.info("After sorting - Composite scores:")
+        for bet in ranked_bets:
+            if hasattr(bet, 'grade') and bet.grade:
+                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
         
         logger.info(f"Ranked {len(ranked_bets)} bets")
         if ranked_bets:
             top_bet = ranked_bets[0]
-            logger.info(f"Top ranked bet: {top_bet.bet_id}, EV: {top_bet.ev_percent}, Priority: {top_bet.priority_rank}")
-        
-        # Get current time for time difference calculations
-        now = datetime.now()
+            logger.info(f"Top ranked bet: {top_bet.bet_id}, EV: {top_bet.ev_percent}, Composite Score: {top_bet.grade.composite_score if hasattr(top_bet, 'grade') and top_bet.grade else 'N/A'}")
         
         return render_template('rankings.html', ranked_bets=ranked_bets, now=now)
     except Exception as e:

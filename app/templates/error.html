@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Error - Sports Betting Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6 bg-red-50">
+            <h3 class="text-lg leading-6 font-medium text-red-800">An Error Occurred</h3>
+            <p class="mt-1 max-w-2xl text-sm text-red-600">
+                Something went wrong while processing your request.
+            </p>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-5 sm:p-6">
+            <div class="prose max-w-none">
+                <h4 class="text-red-700">Error Details</h4>
+                <p class="text-gray-700">{{ error }}</p>
+                
+                <div class="mt-8">
+                    <a href="{{ url_for('main.index') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

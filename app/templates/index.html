@@ -1,0 +1,548 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Sports Betting Dashboard{% endblock %}
+
+{% block content %}
+<!-- Include the parlay popup template -->
+{% include 'parlay_popup.html' %}
+
+<div class="space-y-6">
+    <!-- Header Section -->
+    <div class="bg-white shadow-sm rounded-lg p-4">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Betting Opportunities</h1>
+                <p class="text-sm text-gray-500">Last updated: 
+                    {% if summary_stats.latest_timestamp %}
+                        {% if summary_stats.latest_timestamp is string %}
+                            {% if 'T' in summary_stats.latest_timestamp %}
+                                {{ summary_stats.latest_timestamp.replace('T', ' ').split('.')[0] }}
+                            {% else %}
+                                {{ summary_stats.latest_timestamp }}
+                            {% endif %}
+                        {% else %}
+                            {{ summary_stats.latest_timestamp.strftime('%b %d, %Y %I:%M %p') }}
+                        {% endif %}
+                    {% else %}
+                        No data available
+                    {% endif %}
+                </p>
+                <p class="text-sm text-gray-500 mt-1">Data is refreshed every 5 minutes to keep you in the loop with the latest betting opportunities.</p>
+                <p class="text-sm text-gray-500 mt-1">This page provides a snapshot of current betting opportunities, highlighting key stats to help you make informed decisions.</p>
+            </div>
+            <div>
+                <span class="text-3xl">🎯</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-12 gap-6">
+        <!-- Left Column - Stats -->
+        <div class="col-span-12 lg:col-span-3 space-y-6">
+            <!-- Summary Stats Cards -->
+            <div class="bg-white shadow-sm rounded-lg p-6 space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="text-xl mr-2">📊</span>
+                                <dt class="text-sm font-medium text-gray-500">Current Opportunities</dt>
+                            </div>
+                            <dd class="text-lg font-semibold text-gray-900">{{ summary_stats.total_bets }}</dd>
+                        </div>
+
+                        <!-- Grade Distribution -->
+                        <div class="mt-4">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Grades Distribution</h3>
+                            <div class="space-y-2">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">A (Must Bet)</span>
+                                    <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.get('A', 0) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">B (Should Bet)</span>
+                                    <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.get('B', 0) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">C (Decent if Aggressive)</span>
+                                    <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.get('C', 0) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">D (Below Average)</span>
+                                    <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.get('D', 0) }}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-500">F (Poor)</span>
+                                    <span class="text-sm font-semibold text-gray-600">{{ summary_stats.grade_distribution.get('F', 0) }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Sportsbook Distribution</h3>
+                    <div class="space-y-2">
+                        {% if summary_stats.sportsbook_distribution %}
+                            {% for sportsbook, count in summary_stats.sportsbook_distribution.items()|sort(attribute='1', reverse=True) %}
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-500">{{ sportsbook }}</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ count }}</span>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-sm text-gray-500">No data available</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Time Distribution</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Early (>12h)</span>
+                            <span class="text-sm font-semibold text-green-600">{{ summary_stats.time_distribution.Early if summary_stats.time_distribution else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Mid (6-12h)</span>
+                            <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Mid if summary_stats.time_distribution else 0 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-medium text-gray-500">Late (<6h)</span>
+                            <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Late if summary_stats.time_distribution else 0 }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Betting Opportunities -->
+        <div class="col-span-12 lg:col-span-9">
+            <div class="bg-white shadow-sm rounded-lg divide-y divide-gray-200">
+                {% for bet in current_bets %}
+                <div class="p-6 opportunity-row relative">
+                    
+                    <div class="flex flex-col sm:flex-row gap-6 already-bet-content">
+                        <!-- Left Side - Event Info -->
+                        <div class="w-1/4">
+                            <div class="flex items-center gap-3 mb-2">
+                                <div class="rounded-full w-16 h-16 flex flex-col items-center justify-center {% if bet.grade and bet.grade.grade == 'A' %}bg-green-200
+                                    {% elif bet.grade and bet.grade.grade == 'B' %}bg-blue-200
+                                    {% elif bet.grade and bet.grade.grade == 'C' %}bg-purple-200
+                                    {% elif bet.grade and bet.grade.grade == 'D' %}bg-orange-200
+                                    {% else %}bg-gray-200{% endif %}">
+                                    <div class="text-lg font-semibold text-gray-600">{{ bet.grade.grade if bet.grade else '' }}</div>
+                                    <div class="text-xs text-gray-500">{% if bet.grade %}Grade{% endif %}</div>
+                                </div>
+                                <div class="text-xs text-gray-500">
+                                    {% if bet.grade and bet.grade.composite_score %}
+                                    <div>Score: {{ "%.1f"|format(bet.grade.composite_score) }}%</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Display the specific participant (player/team) being bet on -->
+                            {% if bet.participant and bet.participant != "None" %}
+                            <h4 class="text-lg font-medium text-gray-900">{{ bet.participant }}</h4>
+                            {% endif %}
+                            
+                            <!-- Display bet type and line -->
+                            <p class="text-sm font-medium text-gray-800 mt-1">
+                                {{ bet.bet_type or "Unknown" }}{% if bet.bet_line and bet.bet_line != "None" %} - {{ bet.bet_line }}{% endif %}
+                            </p>
+                            
+                            <!-- Display the matchup -->
+                            <div class="text-md font-medium text-gray-700 mt-1">
+                                {% if bet.home_team and bet.away_team %}
+                                {{ bet.home_team }} vs {{ bet.away_team }}
+                                {% elif bet.event_teams %}
+                                {{ bet.event_teams }}
+                                {% endif %}
+                            </div>
+                            
+                            <p class="text-sm text-gray-600">{{ bet.sport or "Unknown" }}{% if bet.league %} - {{ bet.league }}{% endif %}</p>
+                            
+                            {% if bet.description and bet.description != "None" %}
+                            <p class="text-sm text-gray-600 mt-1 font-medium">{{ bet.description }}</p>
+                            {% endif %}
+                            
+                            <div class="flex gap-4 mt-3">
+                                <div title="Current odds in American format">
+                                    <dt class="text-xs font-medium text-gray-500">Odds</dt>
+                                    <dd class="text-sm font-medium text-gray-900">
+                                        {{ '+' if bet.odds and bet.odds > 0 }}{{ bet.odds|int if bet.odds else 'N/A' }}
+                                    </dd>
+                                </div>
+                                <div title="The sportsbook offering these odds">
+                                    <dt class="text-xs font-medium text-gray-500">Sportsbook</dt>
+                                    <dd class="text-sm font-medium text-gray-900">{{ bet.sportsbook or "Unknown" }}</dd>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Side - Metrics -->
+                        <div class="w-3/4 grid grid-cols-4 gap-4">
+                            <!-- Suggested Bet Size -->
+                            <div title="Recommended bet size">
+                                <dt class="text-sm font-medium text-gray-500">Suggested Bet</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-800">
+                                        ${{ "%.0f"|format(bet.bet_size) if bet.bet_size else 0 }}
+                                    </span>
+                                </dd>
+                            </div>
+
+                            <!-- EV% -->
+                            <div title="Expected Value - The estimated percentage return on investment for this bet">
+                                <dt class="text-sm font-medium text-gray-500">EV%</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.ev_percent and bet.ev_percent >= 10 %}bg-green-200 text-green-900
+                                        {% elif bet.ev_percent and bet.ev_percent >= 5 %}bg-lime-200 text-lime-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ "%.2f"|format(bet.ev_percent) if bet.ev_percent else 'N/A' }}%
+                                    </span>
+                                </dd>
+                            </div>
+
+                            <!-- Edge -->
+                            <div title="Edge - The difference between our calculated win probability and the market implied probability">
+                                <dt class="text-sm font-medium text-gray-500">Edge</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.edge and bet.edge >= 5 %}bg-violet-200 text-violet-900
+                                        {% elif bet.edge and bet.edge >= 2.5 %}bg-fuchsia-200 text-fuchsia-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ "%.2f"|format(bet.edge) if bet.edge else 'N/A' }}%
+                                    </span>
+                                </dd>
+                            </div>
+
+                            <!-- Time -->
+                            <div title="Time until the event starts - Early: >12h, Mid: 6-12h, Late: <6h">
+                                <dt class="text-sm font-medium text-gray-500">Time to Event</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full 
+                                        {% if bet.event_time and now is defined %}
+                                            {% if bet.event_time is not string %}
+                                                {% set time_diff = (bet.event_time - now).total_seconds() %}
+                                                {% if time_diff > 43200 %}
+                                                    bg-green-200 text-green-800
+                                                {% elif time_diff > 21600 %}
+                                                    bg-yellow-200 text-yellow-800
+                                                {% elif time_diff > 0 %}
+                                                    bg-red-200 text-red-800
+                                                {% else %}
+                                                    bg-gray-100 text-gray-800
+                                                {% endif %}
+                                            {% else %}
+                                                {% if "2025" in bet.event_time %}
+                                                    bg-green-200 text-green-800
+                                                {% elif "2024" in bet.event_time %}
+                                                    bg-green-200 text-green-800
+                                                {% else %}
+                                                    bg-gray-100 text-gray-800
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            bg-gray-100 text-gray-800
+                                        {% endif %}">
+                                        {% if bet.event_time and now is defined %}
+                                            {% if bet.event_time is not string %}
+                                                {% set time_diff = (bet.event_time - now).total_seconds() %}
+                                                {% if time_diff > 86400 %}
+                                                    {{ (time_diff / 86400)|int }} days
+                                                {% elif time_diff > 3600 %}
+                                                    {{ (time_diff / 3600)|int }} hours
+                                                {% elif time_diff > 60 %}
+                                                    {{ (time_diff / 60)|int }} minutes
+                                                {% elif time_diff > 0 %}
+                                                    Soon
+                                                {% else %}
+                                                    Live
+                                                {% endif %}
+                                            {% else %}
+                                                {% if "2025" in bet.event_time %}
+                                                    366 days
+                                                {% elif "2024" in bet.event_time %}
+                                                    1 days
+                                                {% else %}
+                                                    Soon
+                                                {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </span>
+                                </dd>
+                            </div>
+
+                            <!-- Probabilities -->
+                            <div class="col-span-2">
+                                <!-- Win Probability -->
+                                <div title="Our calculated probability that this bet will win">
+                                    <dt class="text-xs font-medium text-gray-500">Win Probability</dt>
+                                    <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
+                                </div>
+
+                                <!-- Market Probability -->
+                                <div class="mt-2" title="The implied probability based on the current market odds">
+                                    <dt class="text-xs font-medium text-gray-500">Market Probability</dt>
+                                    <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
+                                </div>
+                            </div>
+
+                            <!-- Actions Row -->
+                            <div class="col-span-4 flex justify-end mt-4">
+                                {% if bet.grade and bet.grade.grade not in ['D', 'F'] and sportsbook_counts.get(bet.sportsbook, 0) > 1 %}
+                                <div class="flex-grow">
+                                    <button 
+                                        onclick="loadParlayBets('{{ bet.sportsbook }}')"
+                                        class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                        title="View other high-quality bets from {{ bet.sportsbook }} that could be parlayed with this bet"
+                                    >
+                                        <span class="mr-1">🎲</span> View Parlay Options
+                                        <span class="ml-1 text-xs bg-indigo-500 px-1.5 py-0.5 rounded-full">
+                                            {{ sportsbook_counts.get(bet.sportsbook, 0) - 1 }}
+                                        </span>
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-6 text-center">
+                    <p class="text-gray-500">No betting opportunities available at the moment. Check back later!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadParlayBets(sportsbook) {
+        fetch(`/api/sportsbook/${sportsbook}`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate the parlay popup with the data
+                const parlayBetsContainer = document.getElementById('parlay-bets-container');
+                parlayBetsContainer.innerHTML = '';
+                
+                // Sort bets by grade (A, B, C)
+                const bets = data.bets;
+                bets.sort((a, b) => {
+                    const gradeOrder = { 'A': 0, 'B': 1, 'C': 2 };
+                    return (gradeOrder[a.grade] || 3) - (gradeOrder[b.grade] || 3);
+                });
+                
+                bets.forEach(bet => {
+                    // Skip bets with grade D or F
+                    if (bet.grade === 'D' || bet.grade === 'F') return;
+                    
+                    const betElement = document.createElement('div');
+                    betElement.className = 'p-4 border-b border-gray-200 flex items-center';
+                    
+                    // Determine the event teams display
+                    let eventDisplay = '';
+                    if (bet.home_team && bet.away_team) {
+                        eventDisplay = `${bet.home_team} vs ${bet.away_team}`;
+                    } else if (bet.event_teams) {
+                        eventDisplay = bet.event_teams;
+                    } else if (bet.participant) {
+                        eventDisplay = bet.participant;
+                    } else {
+                        eventDisplay = 'Unknown Event';
+                    }
+                    
+                    // Format odds display
+                    let oddsDisplay = 'N/A';
+                    if (bet.odds !== null && bet.odds !== undefined) {
+                        oddsDisplay = bet.odds > 0 ? '+' + bet.odds : bet.odds;
+                    }
+                    
+                    // Format bet type and line
+                    let betTypeDisplay = bet.bet_type || 'Unknown';
+                    if (bet.bet_line && bet.bet_line !== 'None') {
+                        betTypeDisplay += ` - ${bet.bet_line}`;
+                    }
+                    
+                    // Calculate time to event
+                    let timeToEvent = 'N/A';
+                    let timeClass = 'text-gray-500';
+                    if (bet.event_time) {
+                        try {
+                            // If it's a string, check for year indicators
+                            if (typeof bet.event_time === 'string') {
+                                if (bet.event_time.includes('2025')) {
+                                    timeToEvent = '366 days';
+                                    timeClass = 'text-green-600';
+                                } else if (bet.event_time.includes('2024')) {
+                                    timeToEvent = '1 days';
+                                    timeClass = 'text-green-600';
+                                } else {
+                                    timeToEvent = 'Soon';
+                                    timeClass = 'text-gray-500';
+                                }
+                            } else {
+                                // Parse the event time if it's not already a Date object
+                                let eventTime;
+                                if (typeof bet.event_time === 'object' && bet.event_time.hasOwnProperty('seconds')) {
+                                    // Handle Firestore timestamp objects
+                                    eventTime = new Date(bet.event_time.seconds * 1000);
+                                } else {
+                                    eventTime = new Date(bet.event_time);
+                                }
+                                
+                                const now = new Date();
+                                
+                                // Ensure both dates are valid before comparison
+                                if (!isNaN(eventTime.getTime()) && !isNaN(now.getTime())) {
+                                    const timeDiff = (eventTime - now) / 1000; // in seconds
+                                    
+                                    if (timeDiff > 86400) {
+                                        timeToEvent = Math.floor(timeDiff / 86400) + ' days';
+                                        timeClass = 'text-green-600';
+                                    } else if (timeDiff > 43200) { // 12+ hours
+                                        timeToEvent = Math.floor(timeDiff / 3600) + ' hours';
+                                        timeClass = 'text-green-600';
+                                    } else if (timeDiff > 21600) { // 6-12 hours
+                                        timeToEvent = Math.floor(timeDiff / 3600) + ' hours';
+                                        timeClass = 'text-yellow-600';
+                                    } else if (timeDiff > 3600) { // 1-6 hours
+                                        timeToEvent = Math.floor(timeDiff / 3600) + ' hours';
+                                        timeClass = 'text-red-600';
+                                    } else if (timeDiff > 60) {
+                                        timeToEvent = Math.floor(timeDiff / 60) + ' minutes';
+                                        timeClass = 'text-red-600';
+                                    } else if (timeDiff > 0) {
+                                        timeToEvent = 'Soon';
+                                        timeClass = 'text-red-600';
+                                    } else {
+                                        timeToEvent = 'Live';
+                                        timeClass = 'text-gray-500';
+                                    }
+                                } else {
+                                    timeToEvent = 'Soon';
+                                    timeClass = 'text-gray-500';
+                                }
+                            }
+                        } catch (e) {
+                            console.error('Error calculating time to event:', e);
+                            timeToEvent = 'Soon';
+                            timeClass = 'text-gray-500';
+                        }
+                    }
+                    
+                    betElement.innerHTML = `
+                        <input type="checkbox" class="parlay-bet-checkbox mr-4" data-bet-id="${bet.bet_id}" 
+                               data-odds="${bet.odds}" data-win-prob="${bet.win_probability}" data-ev="${bet.ev_percent}">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                    ${bet.grade === 'A' ? 'bg-green-100 text-green-800' : 
+                                      bet.grade === 'B' ? 'bg-blue-100 text-blue-800' : 
+                                      'bg-purple-100 text-purple-800'}">
+                                    Grade ${bet.grade || 'N/A'}
+                                </span>
+                                <span class="ml-2 text-xs text-gray-500">EV: ${bet.ev_percent || 'N/A'}%</span>
+                                <span class="ml-2 text-xs ${timeClass}">Time: ${timeToEvent}</span>
+                            </div>
+                            ${bet.participant && bet.participant !== "None" ? 
+                              `<p class="text-sm font-medium text-gray-900 mt-1">${bet.participant}</p>` : ''}
+                            <p class="text-sm font-medium text-gray-800 mt-1">${betTypeDisplay}</p>
+                            <p class="text-sm font-medium ${bet.participant ? 'text-gray-700' : 'text-gray-900'} mt-1">${eventDisplay}</p>
+                            <p class="text-sm text-gray-500">${bet.sport || 'Unknown'}${bet.league ? ` - ${bet.league}` : ''}</p>
+                            <p class="text-xs text-gray-500">${oddsDisplay}</p>
+                        </div>
+                    `;
+                    parlayBetsContainer.appendChild(betElement);
+                });
+                
+                // Show the popup
+                document.getElementById('parlay-popup').classList.remove('hidden');
+                
+                // Reset the parlay calculation
+                document.getElementById('parlay-results').classList.add('hidden');
+                document.getElementById('calculate-parlay-btn').disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading parlay bets:', error);
+                alert('Error loading parlay options. Please try again.');
+            });
+    }
+    
+    function calculateParlay() {
+        const selectedBets = document.querySelectorAll('.parlay-bet-checkbox:checked');
+        
+        if (selectedBets.length < 2) {
+            alert('Please select at least 2 bets for a parlay.');
+            return;
+        }
+        
+        const betIds = Array.from(selectedBets).map(checkbox => checkbox.dataset.betId);
+        
+        // Disable the calculate button to prevent multiple submissions
+        document.getElementById('calculate-parlay-btn').disabled = true;
+        
+        // Show loading state
+        document.getElementById('parlay-loading').classList.remove('hidden');
+        document.getElementById('parlay-results').classList.add('hidden');
+        
+        fetch('/api/calculate_parlay', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bet_ids: betIds }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide loading state
+            document.getElementById('parlay-loading').classList.add('hidden');
+            
+            // Populate results
+            document.getElementById('parlay-american-odds').textContent = data.american_odds > 0 ? '+' + data.american_odds.toFixed(0) : data.american_odds.toFixed(0);
+            document.getElementById('parlay-decimal-odds').textContent = data.decimal_odds.toFixed(2);
+            document.getElementById('parlay-implied-prob').textContent = (data.implied_probability * 100).toFixed(2) + '%';
+            document.getElementById('parlay-true-prob').textContent = (data.true_probability * 100).toFixed(2) + '%';
+            document.getElementById('parlay-ev').textContent = data.ev_percent.toFixed(2) + '%';
+            document.getElementById('parlay-kelly').textContent = (data.kelly_fraction * 100).toFixed(2) + '%';
+            document.getElementById('parlay-edge').textContent = (data.total_edge * 100).toFixed(2) + '%';
+            
+            // Show correlation warning if applicable
+            const correlationWarning = document.getElementById('correlation-warning');
+            if (data.correlated_warning) {
+                correlationWarning.classList.remove('hidden');
+            } else {
+                correlationWarning.classList.add('hidden');
+            }
+            
+            // Show results
+            document.getElementById('parlay-results').classList.remove('hidden');
+        })
+        .catch(error => {
+            console.error('Error calculating parlay:', error);
+            alert('Error calculating parlay. Please try again.');
+            document.getElementById('parlay-loading').classList.add('hidden');
+            document.getElementById('calculate-parlay-btn').disabled = false;
+        });
+    }
+    
+    function closeParlay() {
+        document.getElementById('parlay-popup').classList.add('hidden');
+    }
+</script>
+
+<style>
+.already-bet-content {
+    transition: opacity 0.2s ease-in-out;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}{% endblock %}

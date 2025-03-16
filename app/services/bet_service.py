@@ -5,7 +5,7 @@ This module contains business logic for processing and managing bets.
 import logging
 from app.core.database import execute_query
 from app.models.bet_models import Bet, BetGrade
-from datetime import datetime, timedelta
+from datetime import datetime
 import pytz
 
 logger = logging.getLogger(__name__)
@@ -342,210 +342,56 @@ class BettingService:
     
     @staticmethod
     def calculate_summary_statistics(bets):
-        """
-        Calculate summary statistics for a list of bets.
+        """Calculate summary statistics for a list of bets."""
+        now = datetime.now(pytz.UTC)
         
-        Args:
-            bets (list): List of Bet objects.
+        # Initialize statistics
+        stats = {
+            'total_bets': len(bets),
+            'grade_distribution': {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0},
+            'sportsbook_distribution': {},
+            'time_distribution': {
+                'Immediate': 0,  # <1h
+                'VeryUrgent': 0,  # 1-3h
+                'Urgent': 0,      # 3-6h
+                'Monitor': 0,     # 6-12h
+                'Plan': 0         # >12h
+            },
+            'latest_timestamp': None
+        }
+        
+        # Process each bet
+        for bet in bets:
+            # Grade distribution
+            if hasattr(bet, 'grade') and bet.grade and bet.grade.grade:
+                stats['grade_distribution'][bet.grade.grade] = stats['grade_distribution'].get(bet.grade.grade, 0) + 1
             
-        Returns:
-            dict: Dictionary of summary statistics.
-        """
-        logger = logging.getLogger(__name__)
-        
-        # Initialize empty stats with all possible values
-        empty_stats = {
-            "total_bets": 0,
-            "average_ev": 0,
-            "average_edge": 0,
-            "sportsbooks": [],
-            "grade_distribution": {
-                "A": 0,
-                "B": 0,
-                "C": 0,
-                "D": 0,
-                "F": 0
-            },
-            "sportsbook_distribution": {},
-            "time_distribution": {
-                "Early": 0,
-                "Mid": 0,
-                "Late": 0
-            },
-            "latest_timestamp": None
-        }
-        
-        if not bets:
-            # Get most recent timestamp from betting_data table
-            try:
-                timestamp_result = execute_query(
-                    table_name="betting_data",
-                    query_type="select",
-                    order={"timestamp": "desc"},
-                    limit=1
-                )
-                
-                if timestamp_result and len(timestamp_result) > 0:
-                    latest_timestamp = timestamp_result[0].get('timestamp')
-                    empty_stats["latest_timestamp"] = latest_timestamp
-                    logger.info(f"Got latest timestamp from database: {latest_timestamp}")
-            except Exception as e:
-                logger.error(f"Error getting latest timestamp: {str(e)}")
-                
-            return empty_stats
-        
-        total_bets = len(bets)
-        total_ev = sum(float(bet.ev_percent or 0) for bet in bets)
-        average_ev = total_ev / total_bets if total_bets > 0 else 0
-        
-        # Get latest timestamp from the first bet (since they're already sorted by timestamp desc)
-        latest_timestamp = None
-        if bets:
-            latest_timestamp = bets[0].timestamp
-            logger.info(f"Latest timestamp from first bet: {latest_timestamp}")
-        else:
-            # If no bets provided, get the latest timestamp from the database
-            try:
-                timestamp_result = execute_query(
-                    table_name="betting_data",
-                    query_type="select",
-                    order={"timestamp": "desc"},
-                    limit=1
-                )
-                
-                if timestamp_result and len(timestamp_result) > 0:
-                    latest_timestamp = timestamp_result[0].get('timestamp')
-                    logger.info(f"Got latest timestamp from database: {latest_timestamp}")
-            except Exception as e:
-                logger.error(f"Error getting latest timestamp: {str(e)}")
-        
-        # Calculate edge (market implied probability - win probability)
-        total_edge = 0
-        valid_edge_bets = 0
-        
-        for bet in bets:
-            if bet.odds and bet.win_probability:
-                try:
-                    odds = float(bet.odds)
-                    win_prob = float(bet.win_probability)
-                    
-                    # Calculate market implied probability
-                    if odds > 0:
-                        market_prob = 100 / (odds + 100)
-                    else:
-                        market_prob = abs(odds) / (abs(odds) + 100)
-                    
-                    edge = win_prob - market_prob
-                    total_edge += edge
-                    valid_edge_bets += 1
-                except (ValueError, ZeroDivisionError):
-                    pass
-        
-        average_edge = total_edge / valid_edge_bets if valid_edge_bets > 0 else 0
-        
-        # Get unique sportsbooks
-        sportsbooks = list(set(bet.sportsbook for bet in bets if bet.sportsbook))
-        
-        # Calculate grade distribution (starting with empty distribution)
-        grade_distribution = empty_stats["grade_distribution"].copy()
-        logger.info(f"Starting grade distribution calculation with {len(bets)} bets")
-
-        for bet in bets:
-            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'grade'):
-                grade = bet.grade.grade
-                if grade in grade_distribution:
-                    grade_distribution[grade] += 1
-                    logger.info(f"Counted grade {grade} for bet {bet.bet_id}")
-            else:
-                logger.info(f"Bet {bet.bet_id} has no grade or grade attribute")
-
-        logger.info(f"Final grade distribution: {grade_distribution}")
-        
-        # Calculate sportsbook distribution
-        sportsbook_distribution = {}
-        for bet in bets:
+            # Sportsbook distribution
             if bet.sportsbook:
-                sportsbook_distribution[bet.sportsbook] = sportsbook_distribution.get(bet.sportsbook, 0) + 1
-        
-        # Calculate time distribution (starting with empty distribution)
-        time_distribution = empty_stats["time_distribution"].copy()
-        est = pytz.timezone('America/New_York')
-        now = datetime.now(est)
-        
-        for bet in bets:
-            if bet.event_time:
-                try:
-                    # Ensure event_time is a datetime with timezone
-                    event_time = bet.event_time
-                    if isinstance(event_time, str):
-                        # Try different formats for parsing the string
-                        try:
-                            # Try the format with seconds
-                            naive_dt = datetime.strptime(event_time, "%Y-%m-%dT%H:%M:%S")
-                            event_time = est.localize(naive_dt)
-                        except ValueError:
-                            try:
-                                # Try the format without seconds
-                                naive_dt = datetime.strptime(event_time, "%Y-%m-%d %H:%M")
-                                event_time = est.localize(naive_dt)
-                            except ValueError:
-                                # If all parsing fails, log and continue
-                                logger.warning(f"Could not parse event_time: {event_time} for bet {bet.bet_id}")
-                                continue
-                    elif isinstance(event_time, datetime) and event_time.tzinfo is None:
-                        # If it's a naive datetime, localize it
-                        event_time = est.localize(event_time)
-                    
-                    time_diff = event_time - now
-                    hours_until_event = time_diff.total_seconds() / 3600
-                    
-                    if hours_until_event > 12:
-                        time_distribution["Early"] += 1
-                    elif hours_until_event > 6:
-                        time_distribution["Mid"] += 1
-                    else:
-                        time_distribution["Late"] += 1
-                except (ValueError, TypeError, AttributeError) as e:
-                    logger.warning(f"Error calculating time distribution for bet {bet.bet_id}: {str(e)}")
-                    continue
-        
-        # Format latest timestamp for display
-        formatted_timestamp = None
-        if latest_timestamp:
-            try:
-                if isinstance(latest_timestamp, str):
-                    # Try to parse the string to a datetime
-                    try:
-                        if 'T' in latest_timestamp:
-                            # Handle ISO format with T separator
-                            dt_str = latest_timestamp.replace('T', ' ')
-                            if '.' in dt_str:
-                                dt_str = dt_str.split('.')[0]  # Remove microseconds
-                            formatted_timestamp = dt_str
-                        else:
-                            # Try to parse as datetime and format
-                            dt = datetime.strptime(latest_timestamp, "%Y-%m-%d %H:%M:%S")
-                            formatted_timestamp = dt.strftime("%Y-%m-%d %I:%M %p")
-                    except ValueError:
-                        # If parsing fails, use the string as is
-                        formatted_timestamp = latest_timestamp
+                stats['sportsbook_distribution'][bet.sportsbook] = stats['sportsbook_distribution'].get(bet.sportsbook, 0) + 1
+            
+            # Time distribution
+            if bet.event_time and isinstance(bet.event_time, datetime):
+                time_diff = (bet.event_time - now).total_seconds() / 3600  # Convert to hours
+                if time_diff <= 0:
+                    continue  # Skip expired events
+                elif time_diff <= 1:
+                    stats['time_distribution']['Immediate'] += 1
+                elif time_diff <= 3:
+                    stats['time_distribution']['VeryUrgent'] += 1
+                elif time_diff <= 6:
+                    stats['time_distribution']['Urgent'] += 1
+                elif time_diff <= 12:
+                    stats['time_distribution']['Monitor'] += 1
                 else:
-                    # Convert to string format for display
-                    formatted_timestamp = latest_timestamp.strftime("%Y-%m-%d %I:%M %p")
-                logger.info(f"Formatted timestamp: {formatted_timestamp}")
-            except Exception as e:
-                logger.error(f"Error formatting timestamp: {str(e)}")
+                    stats['time_distribution']['Plan'] += 1
+            
+            # Track latest timestamp
+            if bet.timestamp:
+                if not stats['latest_timestamp'] or bet.timestamp > stats['latest_timestamp']:
+                    stats['latest_timestamp'] = bet.timestamp
         
-        return {
-            "total_bets": total_bets,
-            "average_ev": average_ev,
-            "average_edge": average_edge,
-            "sportsbooks": sportsbooks,
-            "grade_distribution": grade_distribution,
-            "sportsbook_distribution": sportsbook_distribution,
-            "time_distribution": time_distribution,
-            "latest_timestamp": formatted_timestamp
-        }
+        return stats
     
     @staticmethod
     def get_sportsbook_counts():

@@ -1,14 +1,18 @@
 """
 API routes for the application.
 """
-from flask import jsonify, request
-from app.api import bp
+from flask import Blueprint, jsonify, request
+from datetime import datetime
+import pytz
+from app.core.database import execute_query
+from app.services.bet_service import BettingService
+from app.models.bet_models import Bet
 from app.services.parlay import ParlayService
-from app.services.betting import BettingService
-from app.models.betting import Bet
 import logging
 
 logger = logging.getLogger(__name__)
+
+bp = Blueprint('api', __name__)
 
 @bp.route('/calculate_parlay', methods=['POST'])
 def calculate_parlay():

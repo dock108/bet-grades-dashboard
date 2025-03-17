@@ -2,7 +2,7 @@
 Main routes for the application.
 This module contains the routes for the main blueprint.
 """
-from flask import Blueprint, render_template, jsonify
+from flask import render_template, jsonify, redirect, url_for
 from app.main import bp
 from app.services.bet_service import BettingService
 import logging
@@ -81,71 +81,8 @@ def index():
 
 @bp.route('/rankings')
 def rankings():
-    """Render the rankings page with ranked betting opportunities."""
-    try:
-        # Get active bets
-        active_bets = BettingService.get_active_bets()
-        
-        # Get current time in EST for time difference calculations
-        est = pytz.timezone('America/New_York')
-        now = datetime.now(est)
-        
-        # Process bets for ranking
-        ranked_bets = []
-        for bet in active_bets:
-            try:
-                # Ensure event_teams is set
-                if not hasattr(bet, 'event_teams') or not bet.event_teams:
-                    # First try to use home_team and away_team
-                    if bet.home_team and bet.away_team:
-                        bet.event_teams = f"{bet.home_team} vs {bet.away_team}"
-                    # If not available, try to extract from description
-                    elif bet.description and ("vs" in bet.description or "vs." in bet.description):
-                        parts = bet.description.replace("vs.", "vs").split("vs")
-                        if len(parts) >= 2:
-                            bet.event_teams = f"{parts[0].strip()} vs {parts[1].strip()}"
-                    else:
-                        # Use participant as fallback
-                        bet.event_teams = bet.participant
-                
-                ranked_bets.append(bet)
-            except Exception as e:
-                logger.error(f"Error processing bet for ranking: {str(e)}")
-                continue
-
-        # Log initial state
-        logger.info("Before sorting - Composite scores:")
-        for bet in ranked_bets:
-            if hasattr(bet, 'grade') and bet.grade:
-                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
-
-        # Sort by composite score (if available), then EV%
-        def get_sort_key(bet):
-            # Get composite score if available
-            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'composite_score'):
-                score = bet.grade.composite_score
-                # Log the actual score being used for sorting
-                logger.info(f"Sort key for {bet.participant}: Using score {score}")
-                return (-score, -(bet.ev_percent or 0))
-            return (0, -(bet.ev_percent or 0))
-        
-        ranked_bets.sort(key=get_sort_key)
-        
-        # Log sorted state
-        logger.info("After sorting - Composite scores:")
-        for bet in ranked_bets:
-            if hasattr(bet, 'grade') and bet.grade:
-                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
-        
-        logger.info(f"Ranked {len(ranked_bets)} bets")
-        if ranked_bets:
-            top_bet = ranked_bets[0]
-            logger.info(f"Top ranked bet: {top_bet.bet_id}, EV: {top_bet.ev_percent}, Composite Score: {top_bet.grade.composite_score if hasattr(top_bet, 'grade') and top_bet.grade else 'N/A'}")
-        
-        return render_template('rankings.html', ranked_bets=ranked_bets, now=now)
-    except Exception as e:
-        logger.error(f"Error in rankings route: {str(e)}", exc_info=True)
-        return render_template('error.html', error=str(e))
+    """Redirect to the main dashboard page which already shows ranked betting opportunities."""
+    return redirect(url_for('main.index'))
 
 @bp.route('/explainer')
 def explainer():

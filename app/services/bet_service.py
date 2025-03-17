@@ -179,6 +179,8 @@ class BettingService:
             list: List of bets for the sportsbook.
         """
         try:
+            logger.info(f"BetService: Getting bets for sportsbook: {sportsbook}")
+            
             # Get most recent timestamp first
             timestamp_result = execute_query(
                 table_name="betting_data",
@@ -188,17 +190,46 @@ class BettingService:
             )
             
             if not timestamp_result:
+                logger.warning(f"BetService: No timestamps found in betting_data for {sportsbook}")
                 return []
                 
             latest_timestamp = timestamp_result[0].get('timestamp')
+            logger.info(f"BetService: Latest timestamp: {latest_timestamp}")
             
             # Use the Bet model's get_by_sportsbook method which already handles include_resolved
             bets = Bet.get_by_sportsbook(sportsbook, include_resolved=include_resolved)
+            logger.info(f"BetService: Found {len(bets)} total bets for sportsbook {sportsbook}")
             
             # Filter to only include bets from the latest timestamp
             bets = [bet for bet in bets if bet.timestamp == latest_timestamp]
+            logger.info(f"BetService: After filtering for latest timestamp, found {len(bets)} bets for sportsbook {sportsbook}")
             
-            logger.info(f"Found {len(bets)} bets for sportsbook {sportsbook} (include_resolved={include_resolved})")
+            # Log sportsbooks in the database
+            all_sportsbooks = execute_query(
+                table_name="betting_data",
+                query_type="select",
+                filters={}
+            )
+            logger.info(f"BetService: All sportsbooks in database: {[sb.get('sportsbook') for sb in all_sportsbooks if sb.get('sportsbook')]}")
+            
+            # Log the first few bets for debugging
+            if bets:
+                logger.info(f"BetService: First bet for {sportsbook}: {bets[0].bet_id}, {bets[0].participant}, {bets[0].odds}")
+            else:
+                # Check if there are any bets for this sportsbook at all
+                all_sportsbook_bets = execute_query(
+                    table_name="betting_data",
+                    query_type="select",
+                    filters={"sportsbook": sportsbook}
+                )
+                logger.info(f"BetService: Found {len(all_sportsbook_bets)} total bets for {sportsbook} across all timestamps")
+                
+                if all_sportsbook_bets:
+                    # Log the timestamps for this sportsbook
+                    timestamps = set(row.get('timestamp') for row in all_sportsbook_bets)
+                    logger.info(f"BetService: Timestamps for {sportsbook}: {timestamps}")
+                    logger.info(f"BetService: Latest timestamp: {latest_timestamp}")
+                    logger.info(f"BetService: Latest timestamp in set: {latest_timestamp in timestamps}")
             
             # Format event_time for each bet and handle bet_line
             for bet in bets:
@@ -294,7 +325,19 @@ class BettingService:
                 grade_order = {"A": 0, "B": 1, "C": 2, "D": 3, "F": 4, None: 5}
                 bets.sort(key=lambda x: (grade_order.get(x.grade.grade if x.grade else None, 5)))
             
-            return bets
+            # Manually group bets by sportsbook
+            grouped_bets = {}
+            for bet in bets:
+                if bet.sportsbook not in grouped_bets:
+                    grouped_bets[bet.sportsbook] = []
+                grouped_bets[bet.sportsbook].append(bet)
+            
+            # Log grouped bets
+            for sportsbook, bets in grouped_bets.items():
+                logger.info(f"BetService: {len(bets)} bets grouped under sportsbook {sportsbook}")
+            
+            # Return bets for the specified sportsbook
+            return grouped_bets.get(sportsbook, [])
         except Exception as e:
             logger.error(f"Error getting bets by sportsbook: {str(e)}")
             return []

@@ -192,6 +192,22 @@
 
                         <!-- Right Side - Metrics -->
                         <div class="w-3/4 grid grid-cols-4 gap-4">
+                            <!-- Bet Size -->
+                            {% if bet.bet_size is not none %}
+                            <div title="Recommended bet size based on Kelly criterion">
+                                <dt class="text-sm font-medium text-gray-500">Bet Size</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.bet_size > 100 %}bg-green-200 text-green-900
+                                        {% elif bet.bet_size > 50 %}bg-blue-200 text-blue-900
+                                        {% elif bet.bet_size > 0 %}bg-yellow-200 text-yellow-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        ${{ "%.0f"|format(bet.bet_size) }}
+                                    </span>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
                             <!-- EV% -->
                             <div title="Expected Value - Primary factor in grading (55% weight)">
                                 <dt class="text-sm font-medium text-gray-500">Current EV</dt>

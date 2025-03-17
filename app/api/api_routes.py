@@ -2,9 +2,6 @@
 API routes for the application.
 """
 from flask import Blueprint, jsonify, request
-from datetime import datetime
-import pytz
-from app.core.database import execute_query
 from app.services.bet_service import BettingService
 from app.models.bet_models import Bet
 from app.services.parlay import ParlayService
@@ -55,7 +52,9 @@ def calculate_parlay():
 def get_sportsbook_bets(sportsbook):
     """Get all active bets for a specific sportsbook."""
     try:
+        logger.info(f"API: Fetching bets for sportsbook: {sportsbook}")
         bets = BettingService.get_bets_by_sportsbook(sportsbook, include_resolved=False, include_grades=True)
+        logger.info(f"API: Found {len(bets)} bets for sportsbook {sportsbook}")
         
         formatted_bets = []
         for bet in bets:
@@ -84,9 +83,10 @@ def get_sportsbook_bets(sportsbook):
             }
             formatted_bets.append(formatted_bet)
         
+        logger.info(f"API: Returning {len(formatted_bets)} formatted bets for sportsbook {sportsbook}")
         return jsonify(formatted_bets)
     except Exception as e:
-        logger.error(f"Error getting sportsbook bets for {sportsbook}: {str(e)}")
+        logger.error(f"Error getting sportsbook bets for {sportsbook}: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
 @bp.route('/summary_stats')

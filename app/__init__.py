@@ -7,8 +7,8 @@ from flask import Flask
 from flask_caching import Cache
 from app.core.config import get_config
 from app.core.supabase import get_supabase_client
-from flask_cors import CORS
 from app.api.bet_routes import bet_routes
+from app.api.api_routes import bp as api_bp
 
 # Initialize extensions
 cache = Cache()
@@ -37,6 +37,8 @@ def create_app(config_class=None):
         from app.admin import bp as admin_bp
         app.register_blueprint(admin_bp)
         
+        # Register API blueprints
+        app.register_blueprint(api_bp, url_prefix='/api')  # Register api_routes blueprint with /api prefix
         app.register_blueprint(bet_routes, url_prefix='/api')
 
         # Register error handlers

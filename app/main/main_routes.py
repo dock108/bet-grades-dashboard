@@ -28,13 +28,17 @@ def index():
         # Get active bets
         active_bets = BettingService.get_active_bets()
         
-        # Sort bets by composite score
+        # Sort bets by grade letter first (A > B > C > D > F) and then by composite score within each grade
+        grade_order = {"A": 0, "B": 1, "C": 2, "D": 3, "F": 4, None: 5}
+        
         def get_sort_key(bet):
-            # Get composite score if available
-            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'composite_score'):
-                score = bet.grade.composite_score
-                return (-score, -(bet.ev_percent or 0))
-            return (0, -(bet.ev_percent or 0))
+            # First sort by grade letter, then by composite score
+            if hasattr(bet, 'grade') and bet.grade and hasattr(bet.grade, 'grade'):
+                return (
+                    grade_order.get(bet.grade.grade, 5),
+                    -(bet.grade.composite_score if hasattr(bet.grade, 'composite_score') else 0)
+                )
+            return (5, 0)  # No grade is sorted last
         
         active_bets.sort(key=get_sort_key)
         
@@ -63,10 +67,10 @@ def index():
         now = datetime.now(est)
         
         # Log the sorted bets
-        logger.info("Sorted bets by composite score:")
+        logger.info("Sorted bets by grade and composite score:")
         for bet in active_bets:
             if hasattr(bet, 'grade') and bet.grade:
-                logger.info(f"Bet {bet.participant}: Score={bet.grade.composite_score}, EV%={bet.ev_percent}")
+                logger.info(f"Bet {bet.participant}: Grade={bet.grade.grade}, Score={bet.grade.composite_score}")
         
         return render_template(
             'index.html',

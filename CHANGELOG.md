@@ -5,23 +5,62 @@ All notable changes to the Grade Dashboard project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.2] - 2024-03-20
+## [1.1.2] - 2025-03-20
 
 ### Changed
-- Completely revamped the explainer page with a fun, sarcastic tone aimed at sports bettors
-- Added sidebar navigation to the explainer page with smooth scrolling between sections
-- Enhanced the explainer page with gradient backgrounds and improved color coding
-- Updated time distribution labels to be more user-friendly:
-  - "Now-ish" (<1h)
-  - "Soon" (1-3h)
-  - "Later" (3-6h)
-  - "Tonight" (6-12h)
-  - "Tomorrow+" (>12h)
-- Added a detailed section explaining parlay calculator functionality
-- Added comprehensive explanation of Expected Value (EV) concept with real-world examples
-- Improved documentation on "Initial Details" feature including first seen timestamp
+- Completely redesigned the bet card layout with a modern, compact format:
+  - Arranged metrics in a 2x4 grid for better organization
+  - Top row shows Odds, Current EV, Time Left, and Bet Size
+  - Bottom row displays Sportsbook, Win Probability, Market Probability, and Parlay options
+  - Made grade display more prominent with colored left border on bet cards
+  - Added trend indicators using colored arrows (↑, ↓, -) to show changes from initial values
+  - Streamlined Initial Details section into a single row format
+- Revamped the explainer page with a fun, sarcastic tone aimed at sports bettors:
+  - Added sidebar navigation with smooth scrolling between sections
+  - Enhanced with gradient backgrounds and improved color coding
+  - Added detailed sections explaining the trend indicator system and Initial Details feature
+- Improved time distribution display:
+  - Updated labels to be more user-friendly
+  - Removed duplicate entries and standardized formatting
+  - Fixed time threshold calculations for accurate color-coding
+- Removed confusing elements:
+  - Eliminated Bayesian Confidence from the dashboard UI
+  - Removed bell curve grading distribution references from the UI
+  - Fixed display of empty "None" IDs in bet card headers
 
-## [1.0.3] - 2024-03-16
+### Fixed
+- Corrected win and market probability percentage displays
+- Standardized formatting across all UI components
+- Fixed Time Left display threshold in bet cards
+- Improved error handling for missing data points
+
+## [1.1.1] - 2025-03-17
+
+### Changed
+- Updated time-to-event categories to be more granular:
+  - Red: <1h (Immediate action needed)
+  - Orange: 1-3h (Very urgent)
+  - Yellow: 3-6h (Urgent)
+  - Blue: 6-12h (Monitor)
+  - Green: >12h (Plan ahead)
+- Reordered time distribution summary from most urgent to least urgent
+
+## [1.1.0] - 2025-03-17
+
+### Added
+- Initial bet details tracking in new `initial_bet_details` table
+- Bayesian confidence scoring system for bet evaluation
+- Bell curve grading distribution (A: top 2.5%, B: next 13.5%, C: middle 68%, D: next 13.5%, F: bottom 2.5%)
+- Time-aware Bayesian confidence adjustments
+- EV change tracking from initial odds
+
+### Changed
+- Updated grading system to use statistical distribution instead of fixed thresholds
+- Modified UI to show new metrics (EV change, Bayesian confidence)
+- Improved time-based color coding thresholds
+- Updated templates to reflect new grading system
+
+## [1.0.3] - 2025-03-16
 
 ### Changed
 - Renamed files to follow a more descriptive naming convention:
@@ -32,7 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated all relevant imports to reflect new file names
 - Updated project documentation to reflect new file structure
 
-## [1.0.2] - 2024-03-16
+## [1.0.2] - 2025-03-16
 
 ### Added
 - Vercel deployment configuration
@@ -41,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `.vercelignore` to exclude unnecessary files from deployment
 - Updated requirements to use `>=` for better compatibility
 
-## [1.0.1] - 2024-03-16
+## [1.0.1] - 2025-03-16
 
 ### Fixed
 - Removed references to non-existent 'result' column in database queries
@@ -49,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added placeholder implementations for admin functions that previously relied on the result column
 - Removed unused imports in admin routes
 
-## [1.0.0] - 2024-03-16
+## [1.0.0] - 2025-03-16
 
 ### Added
 - Initial release of the Grade Dashboard
@@ -72,76 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in `get_bets_by_sportsbook` method to properly handle the `include_resolved` parameter
 - Improved error handling in betting service methods
 
-## [1.1.0] - 2024-03-17
-
-### Added
-- Initial bet details tracking in new `initial_bet_details` table
-- Bayesian confidence scoring system for bet evaluation
-- Bell curve grading distribution (A: top 2.5%, B: next 13.5%, C: middle 68%, D: next 13.5%, F: bottom 2.5%)
-- Time-aware Bayesian confidence adjustments
-- EV change tracking from initial odds
-
-### Changed
-- Updated grading system to use statistical distribution instead of fixed thresholds
-- Modified UI to show new metrics (EV change, Bayesian confidence)
-- Improved time-based color coding thresholds
-- Updated templates to reflect new grading system
-
-## [1.1.1] - 2024-03-17
-
-### Changed
-- Updated time-to-event categories to be more granular:
-  - Red: <1h (Immediate action needed)
-  - Orange: 1-3h (Very urgent)
-  - Yellow: 3-6h (Urgent)
-  - Blue: 6-12h (Monitor)
-  - Green: >12h (Plan ahead)
-- Reordered time distribution summary from most urgent to least urgent
-
-## [1.1.3] - 2024-03-25
-
-### Changed
-- Removed all bell curve grading distribution references from the UI and explainer
-- Updated grade descriptions to be more intuitive:
-  - A: Exceptional
-  - B: Strong
-  - C: Fair
-  - D: Weak
-  - F: Poor
-- Modified grading system to use absolute criteria instead of distribution percentages
-- Updated Distribution Statistics section in explainer document to remove bell curve references
-
-## [1.1.4] - 2024-03-27
-
-### Changed
-- Removed Bayesian Confidence display from the dashboard UI
-- Updated the explainer document to clarify that confidence calculations happen behind the scenes
-- Simplified the bet metrics display for better user understanding
-
-## [1.1.5] - 2024-03-28
-
-### Added
-- Trend indicators (arrows and icons) for EV and odds to visually show changes from initial values
-- Multiple levels of indicators to show magnitude of changes (slight, moderate, strong, significant)
-- New explainer section documenting the trend indicator system
-- Visual feedback to quickly identify improving or declining betting opportunities
-
-## [1.1.6] - 2024-03-28
-
-### Fixed
-- Fixed trend indicators to correctly show improving or worsening trend direction
-- Added actual value changes to trend indicator hover text for better context
-- Improved logic for determining when odds are improving or worsening
-- Added clear change values in tooltips to see exact differences between initial and current values
-
-## [1.1.7] - 2024-03-28
-
-### Changed
-- Simplified trend indicators to use green dots for positive changes, red dots for negative changes, and grey dots for neutral
-- Removed decimal places from odds in Initial Details section for cleaner display
-- Updated the explainer document to reflect the new trend indicator system
-
-## [0.9.0] - 2024-03-15
+## [0.9.0] - 2025-03-15
 
 ### Added
 - Initial development version
@@ -155,4 +125,102 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Simplified database schema
 
 ### Removed
-- Legacy code and outdated features from previous implementation 
+- Legacy code and outdated features from previous implementation
+
+## [1.2.10] - 2024-03-29
+
+### Fixed
+- Removed dependency on unavailable custom SQL function
+- Fixed error in grade retrieval by using standard database functions
+- Improved error handling for database queries
+- Reverted to using standard query method with time-based filtering
+- Updated logging for better troubleshooting
+
+## [1.2.9] - 2024-03-29
+
+### Improved
+- Dramatically optimized grade retrieval with direct SQL using Common Table Expressions (CTE)
+- Added execute_custom_query function to support advanced SQL queries
+- Replaced inefficient Python-based filtering with database-side SQL filtering
+- Fixed major performance bottleneck that was taking 12-15 seconds during grade lookup
+- SQL optimization now directly retrieves only the most recent grade for each bet ID
+
+## [1.2.8] - 2024-03-29
+
+### Improved
+- Significantly optimized grade lookup performance (12+ seconds reduced to milliseconds)
+- Fixed bottleneck in BetGrade object creation during grade attachment
+- Improved handling of None values in sorting functions
+- Enhanced attribute safety checks with hasattr() in sorting methods
+- More efficient list creation in get_grades_by_bet_ids method
+
+## [1.2.7] - 2024-03-29
+
+### Improved
+- Added detailed performance logging to identify slow operations
+- Added timing metrics for all major service methods in bet_service.py
+- Commented out verbose individual bet logging to reduce log clutter
+- Each method now reports execution time for its key operations
+- Each method now reports total execution time
+- Enhanced error handling with timing metrics for failed operations
+
+## [1.2.6] - 2024-03-29
+
+### Improved
+- Optimized grade retrieval to only fetch records from 5 minutes before the most recent betting data timestamp
+- Significantly reduces database load and processing time when retrieving grades
+- Maintains backward compatibility with fallback to full retrieval when needed
+
+## [1.2.5] - 2024-03-29
+
+### Added
+- First-time user animation that points to the Explainer page
+- Animation automatically disappears after 3 seconds
+- Uses localStorage to track returning visitors
+
+### Fixed
+- Improved bet sorting to strictly prioritize letter grades (A to F) before considering score values 
+- Added "Unusual Line" indicator for bets where the score is unusually high for the assigned grade
+- Ensures bets with a C grade but high EV% are properly sorted after all A and B grade bets
+- Clearly flags bets with score/grade mismatches to indicate deprioritized lines
+
+## [1.2.4] - 2024-03-29
+
+### Fixed
+- Improved bet sorting logic to first sort by grade letter (A, B, C, D, F) and then by composite score within each grade
+- This ensures bets with a C grade but high EV% (e.g., over 20%) won't appear before A or B grade bets
+
+## [1.2.3] - 2024-03-29
+
+### Changed
+- Improved parlay value analysis section with clearer labels for odds comparison
+- Updated terminology from "Calculated True Odds"/"Estimated Market Odds" to "This Sportsbook Pays"/"Market Average Pays"
+- Enhanced tooltip descriptions to better explain the odds comparison
+
+## [1.2.2] - 2024-03-29
+
+### Fixed
+- Improved bet sorting logic to first sort by grade letter (A, B, C, D, F) and then by composite score within each grade
+- This ensures bets with a C grade but high EV% (e.g., over 20%) won't appear before A or B grade bets
+
+## [1.2.1] - 2024-03-29
+
+### Added
+- New section in explainer document about getting limited by sportsbooks
+- Added visual reference showing a betting slip with a small limit
+
+### Changed
+- Reduced color variety in the explainer page for better readability
+- Updated section backgrounds to use more neutral color scheme
+- Redesigned color code guide to use border-left pattern instead of colored backgrounds
+
+## [1.2.0] - 2024-03-29
+
+### Changed
+- Completely redesigned the bet card layout with a modern, compact format:
+  - Arranged metrics in a 2x4 grid for better organization
+  - Top row shows Odds, Current EV, Time Left, and Bet Size
+  - Bottom row displays Sportsbook, Win Probability, Market Probability, and Parlay options
+  - Made grade display more prominent with colored left border on bet cards
+  - Added trend indicators using colored arrows (↑, ↓, -) to show changes from initial values
+  - Streamlined Initial Details section into a single row format

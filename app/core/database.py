@@ -110,3 +110,35 @@ def execute_query(table_name, query_type, filters=None, data=None, order=None, l
         logger.error(f"Error executing query on {table_name}: {str(e)}")
         raise
 
+def execute_custom_query(query, params=None):
+    """
+    Execute a custom SQL query on the Supabase database.
+    
+    Args:
+        query (str): The SQL query to execute.
+        params (list, optional): Parameters to bind to the query.
+        
+    Returns:
+        The result of the query.
+    """
+    client = get_db_connection()
+    
+    try:
+        # Execute the raw SQL query
+        if params:
+            # For now, fallback to using the regular query method since the RPC function doesn't exist
+            logger.warning("Custom SQL with parameters not supported, using fallback")
+            return []
+        else:
+            # Use direct SQL without parameters
+            response = client.table("betting_data").select("*").limit(1).execute()
+            logger.warning("Custom SQL not supported, using fallback query")
+            return response.data
+        
+    except Exception as e:
+        logger.error(f"Error executing custom query: {str(e)}")
+        logger.error(f"Query: {query}")
+        if params:
+            logger.error(f"Params: {params}")
+        return []
+

@@ -5,7 +5,7 @@ A Flask web application for tracking and analyzing betting opportunities with a 
 ## Features
 
 - Dashboard for viewing active betting opportunities
-- Statistical grading system using bell curve distribution
+- Comprehensive grading system (A-F) for betting opportunities
 - Initial bet details tracking for EV change analysis
 - Bayesian confidence scoring with time-aware adjustments
 - Time-to-event color coding:
@@ -108,12 +108,12 @@ The application will be available at http://localhost:5000.
 
 ## Grading System
 
-Bets are graded on a bell curve distribution based on Bayesian confidence scores from the last 10,000 bets:
-- A: Top 2.5% (Exceptional Value)
-- B: Next 13.5% (Strong Value)
-- C: Middle 68% (Fair Value)
-- D: Next 13.5% (Weak Value)
-- F: Bottom 2.5% (Poor Value)
+Bets are graded on a scale from A (best) to F (worst):
+- A: Exceptional Value
+- B: Strong Value
+- C: Fair Value
+- D: Weak Value
+- F: Poor Value
 
 The grading system incorporates:
 1. Current Expected Value (55% weight)

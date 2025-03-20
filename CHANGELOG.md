@@ -121,6 +121,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added detailed explanation of trend indicators in the explainer document
 - Simplified the UI to focus on actionable data points
 
+## [1.1.5] - 2024-03-27
+
+### Added
+- Added prominent EV trendline next to Current EV for at-a-glance trend visibility
+- Enhanced EV trend indicators with expanded levels (↑↑↑, ↑↑, ↑, →, ↓, ↓↓, ↓↓↓) to show magnitude of change
+- Updated the explainer document with detailed information about the new trendline indicators
+
+## [1.1.6] - 2024-03-28
+
+### Changed
+- Completely reorganized bet card layout for better visual hierarchy and logical grouping
+- Grouped related metrics together in a more intuitive structure:
+  - Primary metrics (EV, EV Change, Time Left, Bet Size) in the top row
+  - Secondary metrics (Probabilities, Initial Details) in a structured grid
+  - Match details and odds information in a cleaner left sidebar
+- Improved spacing and visual separation between different information sections
+- Enhanced overall card readability with clearer section organization
+
 ## [0.9.0] - 2024-03-15
 
 ### Added

@@ -18,99 +18,298 @@ window.MathJax = {
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold mb-6">Bet Grading System Explained</h1>
+<div class="flex">
+    <!-- Table of Contents Sidebar -->
+    <div class="w-64 hidden lg:block sticky top-0 h-screen overflow-y-auto p-4 bg-gray-900 text-white">
+        <div class="text-xl font-bold mb-4">Jump to Section:</div>
+        <nav class="space-y-3">
+            <a href="#intro" class="block p-2 rounded hover:bg-gray-800 transition-colors">🎰 WTF Is This Dashboard?</a>
+            <a href="#expected-value" class="block p-2 rounded hover:bg-gray-800 transition-colors">📊 Expected Value</a>
+            <a href="#grade-components" class="block p-2 rounded hover:bg-gray-800 transition-colors">🧠 Grade Components</a>
+            <a href="#bayesian" class="block p-2 rounded hover:bg-gray-800 transition-colors">🧪 Bayesian Confidence</a>
+            <a href="#bell-curve" class="block p-2 rounded hover:bg-gray-800 transition-colors">📊 Bell Curve Grading</a>
+            <a href="#distribution" class="block p-2 rounded hover:bg-gray-800 transition-colors">📈 Distribution Stats</a>
+            <a href="#initial-details" class="block p-2 rounded hover:bg-gray-800 transition-colors">⏰ Initial Details</a>
+            <a href="#color-guide" class="block p-2 rounded hover:bg-gray-800 transition-colors">🎨 Color Code Guide</a>
+            <a href="#parlay" class="block p-2 rounded hover:bg-gray-800 transition-colors">🎲 Parlay Calculator</a>
+            <a href="#wisdom" class="block p-2 rounded hover:bg-gray-800 transition-colors">🔮 Final Wisdom</a>
+        </nav>
+    </div>
     
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Grade Components</h2>
-        <div class="space-y-4">
-            <div class="border-l-4 border-blue-500 pl-4">
-                <h3 class="text-xl font-medium mb-2">Composite Score Breakdown</h3>
+    <!-- Main Content -->
+    <div class="flex-1 container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6">🏆 Holy Sh*t, You Found the Smart Betting Page 🏆</h1>
+        
+        <div id="intro" class="bg-gradient-to-r from-gray-900 to-indigo-900 rounded-lg shadow-lg p-6 mb-8 text-white">
+            <h2 class="text-2xl font-semibold mb-4">🎰 WTF Is This Dashboard Even For?</h2>
+            <p class="text-lg mb-3">
+                This isn't your average sports betting site where some jackass in a suit tells you to "fade the public" while secretly betting the other way. This is mathematical arbitrage for degenerates with calculators.
+            </p>
+            <p class="text-lg mb-3">
+                In the sea of sportsbooks trying to fleece you, we're using cold, hard math to find actual edges. Think of it as counting cards, except legal and the pit boss can't drag you into a back room.
+            </p>
+            <p class="text-lg">
+                Whether you're sipping bourbon while watching the game or hitting your vape pen between parlays, this system gives you an edge the average mouth-breather dumping money on his "lock of the week" doesn't have.
+            </p>
+        </div>
+        
+        <div id="expected-value" class="bg-gradient-to-r from-green-900 to-blue-900 rounded-lg shadow-lg p-6 mb-8 text-white">
+            <h2 class="text-2xl font-semibold mb-4">📊 Expected Value: The Holy Grail for Stoners Who Can Math</h2>
+            <p class="text-lg mb-3">
+                EV is what separates pros from the schmucks tailing Instagram handicappers. It's the mathematical calculation of whether a bet is actually +money in the long run.
+            </p>
+            <p class="text-lg mb-3">
+                The formula is simple, even if you're three bong rips deep:
+            </p>
+            <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                <p class="text-xl text-center">EV = (Probability of Winning × Potential Profit) - (Probability of Losing × Stake)</p>
+            </div>
+            <p class="text-lg mb-3">
+                When a sportsbook offers odds, they're telling you what they think the probability is, plus their juice (the vig). When our calculated probability is different from the implied odds, that's where your edge lives.
+            </p>
+            <p class="text-lg mb-3">
+                EV of 10% means if you bet $100, you'll theoretically make $10 in the long run. It's like the house edge at casinos, but in reverse - you've got the advantage, you beautiful nerd.
+            </p>
+            <div class="bg-red-900 p-4 rounded-lg mt-5">
+                <h3 class="text-xl font-bold mb-2">⚠️ The Reality Check Section ⚠️</h3>
                 <ul class="list-disc ml-6 space-y-2">
-                    <li>Expected Value (EV) Score: 55%</li>
-                    <li>Timing Score: 15%</li>
-                    <li>EV Trend Score: 15%</li>
-                    <li>Bayesian Confidence: 15%</li>
+                    <li><span class="font-bold">Short-Term Volatility:</span> Even a 65% winning bet loses 35% of the time. You could easily lose 5 straight +EV bets before the math evens out. Unlike your ex, math plays the long game.</li>
+                    <li><span class="font-bold">Bankroll Management:</span> Without enough capital to weather variance, you're just another broke genius. Don't bet more than 1-5% of your roll on any one play, no matter how "sure" it is.</li>
+                    <li><span class="font-bold">Lines Move Fast:</span> By the time you finish rolling that joint, the line might be gone. Sportsbooks adjust quick, and +EV opportunities disappear faster than free beer at a frat party.</li>
                 </ul>
-                <p class="mt-4 text-sm text-gray-600">
-                    The grading system prioritizes Expected Value (EV) as the primary indicator of bet quality, 
-                    while considering timing, trend analysis, and Bayesian confidence to provide a comprehensive assessment.
+            </div>
+        </div>
+        
+        <div id="grade-components" class="bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">🧠 Grade Components (Or How We Judge Your Bets)</h2>
+            <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                    <h3 class="text-xl font-medium mb-2">Composite Score Breakdown</h3>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li><span class="font-bold text-green-600">Expected Value (EV) Score: 55%</span> - Because math doesn't lie even when your bookie does</li>
+                        <li><span class="font-bold text-blue-600">Timing Score: 15%</span> - For those checking lines during timeouts while their friends actually watch the game</li>
+                        <li><span class="font-bold text-purple-600">EV Trend Score: 15%</span> - How the sharps are moving money while you're still figuring out which teams are playing</li>
+                        <li><span class="font-bold text-red-600">Bayesian Confidence: 15%</span> - Some MIT-level shit that makes your brain hurt but your wallet happy</li>
+                    </ul>
+                    <p class="mt-4 text-sm">
+                        TL;DR: We care about EV the most because it's the difference between eating ramen or steak next month.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="bayesian" class="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">🧪 Bayesian Confidence (For When You're High AF)</h2>
+            <div class="space-y-4">
+                <p class="text-gray-800">
+                    This is where we get all scientific and shit. Imagine if Nate Silver and Bill Gates had a baby who liked sports:
+                </p>
+                <ul class="list-disc ml-6 space-y-2">
+                    <li>We start with the initial EV (like your first beer of the night)</li>
+                    <li>When EV changes over time:
+                        <ul class="list-circle ml-6 mt-2">
+                            <li>Positive changes: Small boost (0.5x) - Like your team getting the ball back in the 4th quarter</li>
+                            <li>Negative changes: Bigger penalty (1.0x) - Like watching your star player limp to the locker room</li>
+                        </ul>
+                    </li>
+                    <li>Time-based adjustments:
+                        <ul class="list-circle ml-6 mt-2">
+                            <li>Early improvements (>20hrs): 5% boost - Like getting early injury news before the public</li>
+                            <li>Late-stage changes (<3hrs):
+                                <ul class="list-square ml-6 mt-2">
+                                    <li class="text-green-600">Positive/Stable: 10% boost - Like the line moving in your favor right before tip-off</li>
+                                    <li class="text-red-600">Negative: 50% penalty - Like your kicker missing warm-up field goals right before your bet</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Long-term stability bonus:
+                        <ul class="list-circle ml-6 mt-2">
+                            <li>5% boost for bets stable over 12+ hours - If the line doesn't move all day, either everyone's asleep or it's actually fair</li>
+                            <li>Only if EV change < 10% - Minimal movement means the market isn't finding new info</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="bell-curve" class="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">📊 Bell Curve Grading (Like College But For Your Money)</h2>
+            <div class="space-y-4">
+                <p class="text-gray-800">
+                    We grade on a curve because we're not monsters. Based on 10,000 bets (the same amount you swore you'd stop after):
+                </p>
+                <ul class="list-none ml-6 space-y-4">
+                    <li class="flex items-center">
+                        <span class="inline-block w-8 h-8 rounded-full bg-green-500 text-white font-bold flex items-center justify-center mr-3">A</span>
+                        <span>Top 2.5% (z-score ≥ 2.0) - The "text your bookie that you love him" bets</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="inline-block w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center mr-3">B</span>
+                        <span>Next 13.5% (1.0 ≤ z-score < 2.0) - The "might even bet this sober" plays</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="inline-block w-8 h-8 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center mr-3">C</span>
+                        <span>Middle 68% (-1.0 < z-score < 1.0) - The "might as well flip a coin, but mathematically" bets</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="inline-block w-8 h-8 rounded-full bg-orange-500 text-white font-bold flex items-center justify-center mr-3">D</span>
+                        <span>Next 13.5% (-2.0 < z-score ≤ -1.0) - The "Vegas thanks you for your donation" bets</span>
+                    </li>
+                    <li class="flex items-center">
+                        <span class="inline-block w-8 h-8 rounded-full bg-gray-500 text-white font-bold flex items-center justify-center mr-3">F</span>
+                        <span>Bottom 2.5% (z-score ≤ -2.0) - The "are you betting against yourself?" plays</span>
+                    </li>
+                </ul>
+                <div class="mt-6 bg-gray-100 p-4 rounded-lg">
+                    <h3 class="text-xl font-medium mb-2">EV Override Rules (The Casino Always Has One)</h3>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li><span class="font-bold text-red-500">EV ≥ 20%:</span> Cap at 'C' - Because if it looks too good to be true, your bookie probably fat-fingered the line</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="distribution" class="bg-gradient-to-r from-pink-100 to-red-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">📈 Distribution Statistics (Nerd Alert)</h2>
+            <div class="space-y-4">
+                <p class="text-gray-800">
+                    For the stats geeks who pause the game to check box scores:
+                </p>
+                <ul class="list-disc ml-6 space-y-2">
+                    <li>Uses last 10,000 bets (more data than your fantasy football spreadsheet)</li>
+                    <li>Trims top and bottom 2.5% (like ignoring the Browns when making playoff predictions)</li>
+                    <li>Updates every hour (faster than sports talking heads can change their opinions)</li>
+                    <li>Falls back to absolute grading if distribution data unavailable (like having a backup quarterback)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="initial-details" class="bg-gradient-to-r from-indigo-100 to-purple-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">⏰ Initial Details Feature (Time Machine Shit)</h2>
+            <div class="space-y-4">
+                <p class="text-gray-800">
+                    Because knowing where a bet started is like remembering what odds were before LeBron tweeted:
+                </p>
+                <ul class="list-disc ml-6 space-y-2">
+                    <li><span class="font-bold text-green-600">Initial EV:</span> What the math said when we first spotted this beauty - before the public caught on</li>
+                    <li><span class="font-bold text-blue-600">Initial Odds:</span> The original price tag before the squares moved the line</li>
+                    <li><span class="font-bold text-purple-600">First seen:</span> The exact moment we caught this bet slipping - timestamp for you time nerds</li>
+                </ul>
+                
+                <div class="mt-4 p-4 bg-gray-800 text-white rounded-lg">
+                    <h3 class="text-xl font-medium mb-2">Why This Actually Matters (No, Seriously)</h3>
+                    <p>
+                        Comparing the then vs. now helps you spot:
+                    </p>
+                    <ul class="list-disc ml-6 space-y-2 mt-2">
+                        <li>Odds movement - Did the sharps hit this while you were researching the backup tight end's college stats?</li>
+                        <li>EV changes - Is this bet getting stronger like whiskey or weaker like a hotel mini-bar vodka?</li>
+                        <li>Line patterns - Are the professional syndicates nibbling or hammering?</li>
+                    </ul>
+                    <p class="mt-2 text-yellow-300 font-medium">
+                        We feed all this history into our Bayesian voodoo machine, so you know if the bet's getting better or worse over time.
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="color-guide" class="bg-gradient-to-r from-green-100 to-teal-100 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4">🎨 Color Code Guide (For The Sports Bar Squinter)</h2>
+            <div class="space-y-6">
+                <h3 class="text-xl font-medium mb-2">Grades</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-green-200 p-4 rounded-lg">
+                        <span class="font-bold text-green-800">A Grade (Green)</span>
+                        <p class="text-sm text-green-700 mt-1">Elite bets that make bookies nervous</p>
+                    </div>
+                    <div class="bg-blue-200 p-4 rounded-lg">
+                        <span class="font-bold text-blue-800">B Grade (Blue)</span>
+                        <p class="text-sm text-blue-700 mt-1">Solid plays sharps would approve of</p>
+                    </div>
+                    <div class="bg-purple-200 p-4 rounded-lg">
+                        <span class="font-bold text-purple-800">C Grade (Purple)</span>
+                        <p class="text-sm text-purple-700 mt-1">Average bets that won't impress or embarrass</p>
+                    </div>
+                    <div class="bg-orange-200 p-4 rounded-lg">
+                        <span class="font-bold text-orange-800">D Grade (Orange)</span>
+                        <p class="text-sm text-orange-700 mt-1">The kind Vegas profits from daily</p>
+                    </div>
+                    <div class="bg-gray-200 p-4 rounded-lg">
+                        <span class="font-bold text-gray-800">F Grade (Gray)</span>
+                        <p class="text-sm text-gray-700 mt-1">The reason sportsbooks have chandeliers</p>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-medium mb-2 mt-6">EV Colors</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-green-200 p-4 rounded-lg">
+                        <span class="font-bold text-green-800">EV ≥ 10% (Green)</span>
+                        <p class="text-sm text-green-700 mt-1">Sportsbook accounting error in your favor</p>
+                    </div>
+                    <div class="bg-lime-200 p-4 rounded-lg">
+                        <span class="font-bold text-lime-800">EV ≥ 5% (Lime)</span>
+                        <p class="text-sm text-lime-700 mt-1">Still better than most hedge funds</p>
+                    </div>
+                    <div class="bg-gray-100 p-4 rounded-lg">
+                        <span class="font-bold text-gray-800">EV < 5% (Gray)</span>
+                        <p class="text-sm text-gray-700 mt-1">Barely worth putting down the chicken wings</p>
+                    </div>
+                </div>
+                
+                <h3 class="text-xl font-medium mb-2 mt-6">Time Left Colors</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-green-200 p-4 rounded-lg">
+                        <span class="font-bold text-green-800">Tomorrow+ (>12h)</span>
+                        <p class="text-sm text-green-700 mt-1">Plenty of time to overthink this bet</p>
+                    </div>
+                    <div class="bg-blue-200 p-4 rounded-lg">
+                        <span class="font-bold text-blue-800">Tonight (6-12h)</span>
+                        <p class="text-sm text-blue-700 mt-1">You can finish your Netflix episode first</p>
+                    </div>
+                    <div class="bg-yellow-200 p-4 rounded-lg">
+                        <span class="font-bold text-yellow-800">Later (3-6h)</span>
+                        <p class="text-sm text-yellow-700 mt-1">Maybe hit the bathroom before deciding</p>
+                    </div>
+                    <div class="bg-orange-200 p-4 rounded-lg">
+                        <span class="font-bold text-orange-800">Soon (1-3h)</span>
+                        <p class="text-sm text-orange-700 mt-1">Time for one more beer before betting</p>
+                    </div>
+                    <div class="bg-red-200 p-4 rounded-lg">
+                        <span class="font-bold text-red-800">Now-ish (<1h)</span>
+                        <p class="text-sm text-red-700 mt-1">Your pizza delivery might beat this deadline</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="parlay" class="bg-gradient-to-r from-purple-900 to-pink-900 rounded-lg shadow-lg p-6 mb-8 text-white">
+            <h2 class="text-2xl font-semibold mb-4">🎲 The Parlay Calculator (For Degens Who Like Rolling Dice)</h2>
+            <div class="space-y-4">
+                <p class="text-lg mb-3">
+                    Every square's favorite bet and every sharp's secret weapon - the carefully constructed parlay. Our calculator lets you check if your multi-leg bet is actually worth the rush.
+                </p>
+                <p class="text-lg mb-3">
+                    Here's something the average betting site won't tell you: combining multiple +EV bets into a parlay actually compounds your edge. Each +EV bet you add to your parlay increases the total Expected Value percentage. But there's a catch - your variance goes through the roof.
+                </p>
+                <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                    <h3 class="text-xl font-medium mb-2">What Our Calculator Actually Shows:</h3>
+                    <ul class="list-disc ml-6 space-y-2">
+                        <li><span class="font-bold text-green-400">Combined Parlay EV:</span> The total Expected Value when all your +EV bets get multiplied together</li>
+                        <li><span class="font-bold text-red-400">Probability Reality Check:</span> The actual chance of hitting vs. what your brain thinks is "a lock"</li>
+                    </ul>
+                </div>
+                <p class="text-lg">
+                    Think of it this way: If you have two bets that are both 5% +EV with 50% probability of winning, parlaying them gives you higher EV% but drops your hit rate to 25%. It's like upgrading from beer to bourbon - higher potential but higher risk of waking up with regrets.
                 </p>
             </div>
         </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Bayesian Confidence</h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Bayesian confidence is calculated by considering multiple factors:
-            </p>
-            <ul class="list-disc ml-6 space-y-2">
-                <li>Initial EV as prior probability</li>
-                <li>EV change over time:
-                    <ul class="list-circle ml-6 mt-2">
-                        <li>Positive changes: 0.5x multiplier (small boost)</li>
-                        <li>Negative changes: 1.0x multiplier (larger penalty)</li>
-                    </ul>
-                </li>
-                <li>Time-based adjustments:
-                    <ul class="list-circle ml-6 mt-2">
-                        <li>Early improvements (>20hrs): 5% boost</li>
-                        <li>Late-stage changes (<3hrs):
-                            <ul class="list-square ml-6 mt-2">
-                                <li>Positive/Stable: 10% boost</li>
-                                <li>Negative: 50% penalty</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-                <li>Long-term stability bonus:
-                    <ul class="list-circle ml-6 mt-2">
-                        <li>5% boost for bets stable over 12+ hours</li>
-                        <li>Applies only if EV change < 10%</li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
-        <h2 class="text-2xl font-semibold mb-4">Bell Curve Grading</h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                Grades are assigned using a bell curve distribution based on the last 10,000 bets:
-            </p>
-            <ul class="list-disc ml-6 space-y-2">
-                <li>A: Top 2.5% (z-score ≥ 2.0)</li>
-                <li>B: Next 13.5% (1.0 ≤ z-score < 2.0)</li>
-                <li>C: Middle 68% (-1.0 < z-score < 1.0)</li>
-                <li>D: Next 13.5% (-2.0 < z-score ≤ -1.0)</li>
-                <li>F: Bottom 2.5% (z-score ≤ -2.0)</li>
-            </ul>
-            <div class="mt-4">
-                <h3 class="text-xl font-medium mb-2">EV Override Rules</h3>
-                <ul class="list-disc ml-6 space-y-2">
-                    <li>EV ≥ 20%: Cap at 'C' (suspicious high EV)</li>
-                    <li>EV ≥ 10%: Minimum grade 'A'</li>
-                    <li>EV ≥ 5%: Minimum grade 'B'</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-lg shadow-lg p-6">
-        <h2 class="text-2xl font-semibold mb-4">Distribution Statistics</h2>
-        <div class="space-y-4">
-            <p class="text-gray-700">
-                The grading system maintains rolling statistics:
-            </p>
-            <ul class="list-disc ml-6 space-y-2">
-                <li>Uses last 10,000 bets for distribution</li>
-                <li>Trims top and bottom 2.5% to remove outliers</li>
-                <li>Updates every hour to maintain accuracy</li>
-                <li>Falls back to absolute grading if distribution data unavailable</li>
-            </ul>
+        
+        <div id="wisdom" class="p-6 bg-gray-800 text-white rounded-lg">
+            <h2 class="text-2xl font-semibold mb-4">🔮 Final Word of Wisdom</h2>
+            <p class="text-lg">Remember, Vegas wasn't built on winners. Even with all this math, you need bankroll management and patience. Think of it like poker - play enough +EV hands correctly, and you'll come out ahead despite losing plenty along the way.</p>
+            <p class="text-lg mt-4">The average sports bettor is the same guy who can't count to 21 at blackjack and thinks a parlay is "better value." You're not that guy anymore. You're now armed with math that 99% of bettors don't understand or use.</p>
+            <p class="text-lg mt-4">Now go forth and exploit market inefficiencies. The sportsbooks won't know what hit 'em.</p>
         </div>
     </div>
 </div>
@@ -123,4 +322,40 @@ window.MathJax = {
         list-style-type: square;
     }
 </style>
+
+<script>
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                window.scrollTo({
+                    top: target.offsetTop - 20,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+    
+    // Highlight current section in TOC
+    window.addEventListener('scroll', function() {
+        const sections = document.querySelectorAll('div[id]');
+        let currentSection = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (window.scrollY >= sectionTop - 100) {
+                currentSection = section.getAttribute('id');
+            }
+        });
+        
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('bg-gray-800');
+            if (link.getAttribute('href') === '#' + currentSection) {
+                link.classList.add('bg-gray-800');
+            }
+        });
+    });
+</script>
 {% endblock %} 

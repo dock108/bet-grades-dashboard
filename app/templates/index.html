@@ -102,15 +102,15 @@
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Time Distribution</h3>
                     <div class="space-y-2">
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Immediate (<1h)</span>
+                            <span class="text-sm font-medium text-gray-500">Make a Decision! (<1h)</span>
                             <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate if summary_stats.time_distribution else 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Very Urgent (1-3h)</span>
+                            <span class="text-sm font-medium text-gray-500">Pre-Game (1-3h)</span>
                             <span class="text-sm font-semibold text-orange-600">{{ summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span class="text-sm font-medium text-gray-500">Urgent (3-6h)</span>
+                            <span class="text-sm font-medium text-gray-500">Think About It (3-6h)</span>
                             <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
                         </div>
                         <div class="flex justify-between items-center">
@@ -284,16 +284,65 @@
                             <div class="col-span-2">
                                 <!-- Win Probability -->
                                 <div title="Our calculated probability that this bet will win">
-                                    <dt class="text-xs font-medium text-gray-500">Win Probability</dt>
+                                    <dt class="text-sm font-medium text-gray-500">Win Probability</dt>
                                     <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
                                 </div>
 
                                 <!-- Market Probability -->
                                 <div class="mt-2" title="The implied probability based on the current market odds">
-                                    <dt class="text-xs font-medium text-gray-500">Market Probability</dt>
+                                    <dt class="text-sm font-medium text-gray-500">Market Probability</dt>
                                     <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
                                 </div>
                             </div>
+                            
+                            {% if bet.initial_odds or bet.initial_ev is not none %}
+                            <div class="col-span-2">
+                                <div title="Initial information when the bet was first seen">
+                                    <dt class="text-sm font-medium text-gray-500">Initial Details</dt>
+                                    <dd class="text-sm font-medium text-gray-900">
+                                        <div class="flex flex-col gap-1 mt-1">
+                                            {% if bet.initial_ev is not none %}
+                                            <span>EV: {{ "%.2f"|format(bet.initial_ev) }}%</span>
+                                            {% endif %}
+                                            
+                                            {% if bet.initial_odds %}
+                                            <span>Odds: {% if bet.initial_odds is string %}
+                                                    {% if bet.initial_odds.startswith('-') %}
+                                                        {{ bet.initial_odds }}
+                                                    {% else %}
+                                                        +{{ bet.initial_odds.lstrip('+') }}
+                                                    {% endif %}
+                                                  {% else %}
+                                                    {% if bet.initial_odds > 0 %}+{% endif %}{{ bet.initial_odds|int }}
+                                                  {% endif %}</span>
+                                            {% endif %}
+                                            
+                                            {% if bet.first_seen %}
+                                            <span>First seen: 
+                                                {% if bet.first_seen is string %}
+                                                    {% if 'T' in bet.first_seen %}
+                                                        {% set datetime_parts = bet.first_seen.replace('T', ' ').split('.')[0].split(' ') %}
+                                                        {% set date_part = datetime_parts[0].split('-') %}
+                                                        {% set time_part = datetime_parts[1].split(':') %}
+                                                        {% set hour = time_part[0]|int %}
+                                                        {% set minute = time_part[1] %}
+                                                        {% set am_pm = 'AM' if hour < 12 else 'PM' %}
+                                                        {% set display_hour = hour if hour <= 12 else hour - 12 %}
+                                                        {% set display_hour = 12 if display_hour == 0 else display_hour %}
+                                                        {{ date_part[1] }}/{{ date_part[2] }} {{ display_hour }}:{{ minute }} {{ am_pm }}
+                                                    {% else %}
+                                                        {{ bet.first_seen }}
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ bet.first_seen.strftime('%m/%d %I:%M %p') }}
+                                                {% endif %}
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                    </dd>
+                                </div>
+                            </div>
+                            {% endif %}
 
                             <!-- Actions Row -->
                             <div class="col-span-4 flex justify-end mt-4">

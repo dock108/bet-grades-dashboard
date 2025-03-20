@@ -1,21 +1,19 @@
 # Grade Dashboard
 
-A Flask web application for tracking and analyzing betting opportunities with a focus on expected value (EV) and Bayesian confidence scoring.
+A Flask web application for tracking and analyzing betting opportunities with a focus on expected value (EV) and trend analysis.
 
 ## Features
 
 - Dashboard for viewing active betting opportunities
 - Comprehensive grading system (A-F) for betting opportunities
-- Initial bet details tracking for EV change analysis
-- Bayesian confidence scoring with time-aware adjustments
+- Initial bet details tracking for historical analysis and trend indicators
 - Time-to-event color coding:
-  - Red: <1h ("Now-ish")
-  - Orange: 1-3h ("Soon")
-  - Yellow: 3-6h ("Later")
-  - Blue: 6-12h ("Tonight")
-  - Green: >12h ("Tomorrow+")
+  - Red: 0-3 hours
+  - Yellow: 3-6 hours
+  - Purple: 6-12 hours
+  - Blue: 12+ hours
 - Sportsbook distribution tracking
-- Rankings page for prioritized betting opportunities
+- Trend indicators showing changes in odds and EV
 - Explainer page with detailed information about the grading system
 - Parlay calculator for multi-leg bets
 
@@ -109,21 +107,27 @@ The application will be available at http://localhost:5000.
 ## Grading System
 
 Bets are graded on a scale from A (best) to F (worst):
-- A: Exceptional Value
-- B: Strong Value
-- C: Fair Value
-- D: Weak Value
-- F: Poor Value
+- A: Exceptional
+- B: Strong
+- C: Fair
+- D: Weak
+- F: Poor
 
 The grading system incorporates:
-1. Current Expected Value (55% weight)
-2. EV Change from Initial Odds
-3. Bayesian Confidence Score
+1. Current Expected Value (EV%)
+2. Win Probability
+3. Market Implied Probability
 4. Time Until Event
+5. Trend indicators (EV and odds changes)
 
-Bayesian confidence is calculated using:
-- EV changes since the bet was first seen
-- Time remaining until the event starts
-- Asymmetric weighting for EV improvements vs declines
+The dashboard uses trend indicators to show how odds and EV have changed since the bet was first seen:
+- Green arrows (↑) indicate improving conditions
+- Red arrows (↓) indicate worsening conditions
+- Grey hyphen (-) indicates no significant change
+
+The Initial Details section of each bet card provides historical context by showing:
+- Initial EV - the EV% when the bet was first discovered
+- Initial Odds - the opening odds offered by the sportsbook
+- First seen - when the betting opportunity was first identified
 
 See the Explainer page for more details on the grading methodology.

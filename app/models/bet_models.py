@@ -776,8 +776,8 @@ class BetGrade:
     
     def _assign_bell_curve_grade(self):
         """
-        Assign A/B/C/D/F grade based on confidence score and EV overrides.
-        Uses absolute grading criteria without bell curve distribution.
+        Assign A/B/C/D/F grade based on confidence score distribution and EV overrides.
+        Uses bell curve distribution and applies EV-based overrides.
         """
         if self.bayesian_confidence is None or self.ev_score is None:
             return 'F'
@@ -792,17 +792,22 @@ class BetGrade:
         # Clamp confidence to trimmed range
         clamped_confidence = max(min(self.bayesian_confidence, stats['trimmed_max']), stats['trimmed_min'])
         
-        # Assign initial grade based on absolute confidence scores
-        if clamped_confidence >= 85:
-            initial_grade = 'A'  # Exceptional
-        elif clamped_confidence >= 75:
-            initial_grade = 'B'  # Strong
-        elif clamped_confidence >= 60:
-            initial_grade = 'C'  # Fair
-        elif clamped_confidence >= 45:
-            initial_grade = 'D'  # Weak
+        # Assign initial grade based on bell curve
+        if stats['std'] == 0:
+            initial_grade = 'C'  # Default to C if no variation
         else:
-            initial_grade = 'F'  # Poor
+            z_score = (clamped_confidence - stats['mean']) / stats['std']
+            
+            if z_score >= 2.0:  # Top 2.5%
+                initial_grade = 'A'
+            elif z_score >= 1.0:  # Next 13.5%
+                initial_grade = 'B'
+            elif z_score > -1.0:  # Middle 68%
+                initial_grade = 'C'
+            elif z_score > -2.0:  # Next 13.5%
+                initial_grade = 'D'
+            else:  # Bottom 2.5%
+                initial_grade = 'F'
         
         # Apply EV-based overrides
         if self.ev_score >= 20:
@@ -830,14 +835,14 @@ class BetGrade:
     @classmethod
     def test_distribution_grading(cls):
         """
-        Test method to verify grading distribution.
+        Test method to verify bell curve grading distribution.
         Prints statistics and grade distribution of recent bets.
         """
         try:
             # Force update of distribution stats
             stats = cls._get_distribution_stats(force_update=True)
             
-            print("\nGrading Statistics:")
+            print("\nBell Curve Grading Statistics:")
             print(f"Mean Confidence: {stats['mean']:.2f}")
             print(f"Standard Deviation: {stats['std']:.2f}")
             print(f"Trimmed Range: {stats['trimmed_min']:.2f} - {stats['trimmed_max']:.2f}")
@@ -866,54 +871,3 @@ class BetGrade:
         except Exception as e:
             print(f"Error in test_distribution_grading: {str(e)}")
             return None
-
-    def assign_grade(self, summary_stats=None):
-        """Assign a grade to the bet based on a holistic evaluation."""
-        if self.ev_percent is None:
-            self.grade = 'N/A'
-            return
-        
-        # Calculate component scores
-        ev_score = self._calculate_ev_score()
-        timing_score = self._calculate_timing_score()
-        ev_trend_score = self._calculate_ev_trend_score()
-        bayesian_score = self._calculate_bayesian_score()
-        
-        # Weighted composite score
-        composite_score = (
-            ev_score * 0.55 +  # EV score is the most important factor
-            timing_score * 0.15 +  # Timing has modest impact
-            ev_trend_score * 0.15 +  # Trend direction matters
-            bayesian_score * 0.15  # Confidence based on our model
-        )
-        
-        # Assign letter grade based on composite score
-        if composite_score >= 90:
-            grade = 'A'  # Exceptional value
-        elif composite_score >= 75:
-            grade = 'B'  # Strong value
-        elif composite_score >= 50:
-            grade = 'C'  # Fair value
-        elif composite_score >= 25:
-            grade = 'D'  # Weak value
-        else:
-            grade = 'F'  # Poor value
-        
-        # Override rules - cap extremely high EVs at C grade if at or above 20%
-        # This is because extremely high EVs are often due to data errors or line mistakes that get corrected
-        if self.ev_percent is not None and float(self.ev_percent) >= 20 and grade in ['A', 'B']:
-            grade = 'C'
-            
-        self.grade = grade
-        return grade
-        
-    @classmethod
-    def calculate_grade_distribution(cls, bets):
-        """Calculate the distribution of grades across all bets."""
-        grades = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0}
-        
-        for bet in bets:
-            if bet.grade in grades:
-                grades[bet.grade] += 1
-        
-        return grades

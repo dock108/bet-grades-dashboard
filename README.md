@@ -9,11 +9,11 @@ A Flask web application for tracking and analyzing betting opportunities with a 
 - Initial bet details tracking for EV change analysis
 - Bayesian confidence scoring with time-aware adjustments
 - Time-to-event color coding:
-  - Red: <1h (Immediate action needed)
-  - Orange: 1-3h (Very urgent)
-  - Yellow: 3-6h (Urgent)
-  - Blue: 6-12h (Monitor)
-  - Green: >12h (Plan ahead)
+  - Red: <1h ("Now-ish")
+  - Orange: 1-3h ("Soon")
+  - Yellow: 3-6h ("Later")
+  - Blue: 6-12h ("Tonight")
+  - Green: >12h ("Tomorrow+")
 - Sportsbook distribution tracking
 - Rankings page for prioritized betting opportunities
 - Explainer page with detailed information about the grading system

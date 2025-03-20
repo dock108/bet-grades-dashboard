@@ -5,6 +5,22 @@ All notable changes to the Grade Dashboard project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2024-03-20
+
+### Changed
+- Completely revamped the explainer page with a fun, sarcastic tone aimed at sports bettors
+- Added sidebar navigation to the explainer page with smooth scrolling between sections
+- Enhanced the explainer page with gradient backgrounds and improved color coding
+- Updated time distribution labels to be more user-friendly:
+  - "Now-ish" (<1h)
+  - "Soon" (1-3h)
+  - "Later" (3-6h)
+  - "Tonight" (6-12h)
+  - "Tomorrow+" (>12h)
+- Added a detailed section explaining parlay calculator functionality
+- Added comprehensive explanation of Expected Value (EV) concept with real-world examples
+- Improved documentation on "Initial Details" feature including first seen timestamp
+
 ## [1.0.3] - 2024-03-16
 
 ### Changed

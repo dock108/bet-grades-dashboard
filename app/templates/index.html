@@ -58,23 +58,23 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-4">Grades Distribution</h3>
                             <div class="space-y-2">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">A (Top 2.5%)</span>
+                                    <span class="text-sm font-medium text-gray-500">A (Exceptional)</span>
                                     <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.get('A', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">B (Next 13.5%)</span>
+                                    <span class="text-sm font-medium text-gray-500">B (Strong)</span>
                                     <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.get('B', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">C (Middle 68%)</span>
+                                    <span class="text-sm font-medium text-gray-500">C (Fair)</span>
                                     <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.get('C', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">D (Next 13.5%)</span>
+                                    <span class="text-sm font-medium text-gray-500">D (Weak)</span>
                                     <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.get('D', 0) }}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">F (Bottom 2.5%)</span>
+                                    <span class="text-sm font-medium text-gray-500">F (Poor)</span>
                                     <span class="text-sm font-semibold text-gray-600">{{ summary_stats.grade_distribution.get('F', 0) }}</span>
                                 </div>
                             </div>
@@ -236,22 +236,6 @@
                             </div>
                             {% endif %}
 
-                            <!-- Bayesian Confidence -->
-                            {% if bet.grade and bet.grade.bayesian_confidence is not none %}
-                            <div title="Confidence score based on EV trends and timing">
-                                <dt class="text-sm font-medium text-gray-500">Confidence</dt>
-                                <dd class="mt-1">
-                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
-                                        {% if bet.grade.bayesian_confidence >= 80 %}bg-green-200 text-green-900
-                                        {% elif bet.grade.bayesian_confidence >= 60 %}bg-blue-200 text-blue-900
-                                        {% elif bet.grade.bayesian_confidence >= 40 %}bg-yellow-200 text-yellow-900
-                                        {% else %}bg-red-200 text-red-900{% endif %}">
-                                        {{ "%.1f"|format(bet.grade.bayesian_confidence) }}%
-                                    </span>
-                                </dd>
-                            </div>
-                            {% endif %}
-
                             <!-- Time -->
                             <div title="Time until event - Affects confidence and grading">
                                 <dt class="text-sm font-medium text-gray-500">Time Left</dt>
@@ -318,11 +302,27 @@
                                     <dd class="text-sm font-medium text-gray-900">
                                         <div class="flex flex-col gap-1 mt-1">
                                             {% if bet.initial_ev is not none %}
-                                            <span>EV: {{ "%.2f"|format(bet.initial_ev) }}%</span>
+                                            <span class="flex items-center">
+                                                EV: {{ "%.2f"|format(bet.initial_ev) }}%
+                                                {% if bet.grade and bet.grade.ev_change is not none %}
+                                                    {% if bet.grade.ev_change > 0.5 %}
+                                                        <span class="ml-2 text-green-600" title="EV has significantly improved">↑</span>
+                                                    {% elif bet.grade.ev_change > 0 %}
+                                                        <span class="ml-2 text-green-600" title="EV has slightly improved">↗</span>
+                                                    {% elif bet.grade.ev_change > -0.5 %}
+                                                        <span class="ml-2 text-gray-600" title="EV is relatively stable">→</span>
+                                                    {% elif bet.grade.ev_change > -1 %}
+                                                        <span class="ml-2 text-red-600" title="EV has slightly decreased">↘</span>
+                                                    {% else %}
+                                                        <span class="ml-2 text-red-600" title="EV has significantly decreased">↓</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </span>
                                             {% endif %}
                                             
                                             {% if bet.initial_odds %}
-                                            <span>Odds: {% if bet.initial_odds is string %}
+                                            <span class="flex items-center">
+                                                Odds: {% if bet.initial_odds is string %}
                                                     {% if bet.initial_odds.startswith('-') %}
                                                         {{ bet.initial_odds }}
                                                     {% else %}
@@ -330,7 +330,31 @@
                                                     {% endif %}
                                                   {% else %}
                                                     {% if bet.initial_odds > 0 %}+{% endif %}{{ bet.initial_odds|int }}
-                                                  {% endif %}</span>
+                                                  {% endif %}
+                                                {% if bet.initial_odds and bet.odds %}
+                                                    {% if bet.initial_odds is string %}
+                                                        {% set initial_odds_num = bet.initial_odds.lstrip('+') | int %}
+                                                    {% else %}
+                                                        {% set initial_odds_num = bet.initial_odds %}
+                                                    {% endif %}
+                                                    
+                                                    {% if bet.odds is string %}
+                                                        {% set current_odds_num = bet.odds.lstrip('+') | int %}
+                                                    {% else %}
+                                                        {% set current_odds_num = bet.odds %}
+                                                    {% endif %}
+                                                    
+                                                    {% if (initial_odds_num > 0 and current_odds_num > initial_odds_num) or 
+                                                          (initial_odds_num < 0 and current_odds_num < initial_odds_num) %}
+                                                        <span class="ml-2 text-green-600" title="Odds have improved">↑</span>
+                                                    {% elif (initial_odds_num > 0 and current_odds_num < initial_odds_num) or
+                                                           (initial_odds_num < 0 and current_odds_num > initial_odds_num) %}
+                                                        <span class="ml-2 text-red-600" title="Odds have worsened">↓</span>
+                                                    {% else %}
+                                                        <span class="ml-2 text-gray-600" title="Odds are stable">→</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </span>
                                             {% endif %}
                                             
                                             {% if bet.first_seen %}

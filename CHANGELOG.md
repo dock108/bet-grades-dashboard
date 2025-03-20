@@ -98,6 +98,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Green: >12h (Plan ahead)
 - Reordered time distribution summary from most urgent to least urgent
 
+## [1.1.3] - 2024-03-25
+
+### Changed
+- Removed all bell curve grading distribution references from the UI and explainer
+- Updated grade descriptions to be more intuitive:
+  - A: Exceptional
+  - B: Strong
+  - C: Fair
+  - D: Weak
+  - F: Poor
+- Modified grading system to use absolute criteria instead of distribution percentages
+- Updated Distribution Statistics section in explainer document to remove bell curve references
+
+## [1.1.4] - 2024-03-26
+
+### Changed
+- Removed Bayesian Confidence display from the dashboard UI as it was causing confusion
+- Added intuitive trend indicators (↑, →, ↓) in the Initial Details section to show:
+  - EV trends (significant improvement, slight improvement, stable, slight decline, significant decline)
+  - Odds movement (better, stable, worse)
+- Added detailed explanation of trend indicators in the explainer document
+- Simplified the UI to focus on actionable data points
+
 ## [0.9.0] - 2024-03-15
 
 ### Added

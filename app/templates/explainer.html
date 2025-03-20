@@ -147,7 +147,6 @@ window.MathJax = {
                 </p>
                 <ul class="list-disc ml-6 space-y-2">
                     <li>Uses last 10,000 bets (more data than your fantasy football spreadsheet)</li>
-                    <li>Trims top and bottom 2.5% (like ignoring the Browns when making playoff predictions)</li>
                     <li>Updates every hour (faster than sports talking heads can change their opinions)</li>
                     <li>Falls back to absolute grading if distribution data unavailable (like having a backup quarterback)</li>
                 </ul>
@@ -179,6 +178,36 @@ window.MathJax = {
                     <p class="mt-2 text-yellow-300 font-medium">
                         We feed all this history into our Bayesian voodoo machine, so you know if the bet's getting better or worse over time.
                     </p>
+                </div>
+                
+                <div class="mt-4 p-4 bg-purple-800 text-white rounded-lg">
+                    <h3 class="text-xl font-medium mb-2">Trend Indicators: Because Graphs Are For Nerds</h3>
+                    <p class="mb-3">
+                        We've added simple trend arrows so even your drunk ass can tell if a bet is improving or tanking:
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-lg font-medium mb-2">EV Trends</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑</span> Significant improvement (your bank account likes this)</li>
+                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↗</span> Slight improvement (heading in the right direction)</li>
+                                <li class="flex items-center"><span class="text-gray-300 text-xl mr-2">→</span> Stable (not getting better or worse)</li>
+                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↘</span> Slight decline (proceed with caution)</li>
+                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↓</span> Significant decline (might want to look elsewhere)</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-medium mb-2">Odds Trends</h4>
+                            <ul class="space-y-2">
+                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑</span> Better odds (more money for you if you win)</li>
+                                <li class="flex items-center"><span class="text-gray-300 text-xl mr-2">→</span> Stable odds (the book isn't panicking)</li>
+                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↓</span> Worse odds (sharps might be hammering the other side)</li>
+                            </ul>
+                            <p class="mt-3 text-sm">
+                                Remember: For negative odds (-110, -250, etc.), smaller numbers are worse. For positive odds (+120, +300, etc.), bigger numbers are better.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

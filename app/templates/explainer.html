@@ -88,7 +88,7 @@ window.MathJax = {
                         <li><span class="font-bold text-green-600">Expected Value (EV) Score: 55%</span> - Because math doesn't lie even when your bookie does</li>
                         <li><span class="font-bold text-blue-600">Timing Score: 15%</span> - For those checking lines during timeouts while their friends actually watch the game</li>
                         <li><span class="font-bold text-purple-600">EV Trend Score: 15%</span> - How the sharps are moving money while you're still figuring out which teams are playing</li>
-                        <li><span class="font-bold text-red-600">Bayesian Confidence: 15%</span> - Some MIT-level shit that makes your brain hurt but your wallet happy</li>
+                        <li><span class="font-bold text-red-600">Bayesian Confidence: 15%</span> - Some MIT-level math that works behind the scenes to improve your grading</li>
                     </ul>
                     <p class="mt-4 text-sm">
                         TL;DR: We care about EV the most because it's the difference between eating ramen or steak next month.
@@ -105,10 +105,10 @@ window.MathJax = {
         </div>
 
         <div id="bayesian" class="bg-gradient-to-r from-green-100 to-blue-100 rounded-lg shadow-lg p-6 mb-8">
-            <h2 class="text-2xl font-semibold mb-4">🧪 Bayesian Confidence (For When You're High AF)</h2>
+            <h2 class="text-2xl font-semibold mb-4">🧪 Bayesian Confidence (Behind the Scenes)</h2>
             <div class="space-y-4">
                 <p class="text-gray-800">
-                    This is where we get all scientific and shit. Imagine if Nate Silver and Bill Gates had a baby who liked sports:
+                    This is where we get all scientific and shit. Our grading system uses these calculations under the hood:
                 </p>
                 <ul class="list-disc ml-6 space-y-2">
                     <li>We start with the initial EV (like your first beer of the night)</li>
@@ -136,6 +136,9 @@ window.MathJax = {
                         </ul>
                     </li>
                 </ul>
+                <p class="text-gray-800 mt-4">
+                    These calculations happen automatically to help determine your bet grades - you don't need to worry about the details.
+                </p>
             </div>
         </div>
 
@@ -181,38 +184,39 @@ window.MathJax = {
                 </div>
                 
                 <div class="mt-4 p-4 bg-purple-800 text-white rounded-lg">
-                    <h3 class="text-xl font-medium mb-2">Trend Indicators: Because Graphs Are For Nerds</h3>
-                    <p class="mb-3">
-                        We've added simple trend arrows so even your drunk ass can tell if a bet is improving or tanking:
+                    <h3 class="text-xl font-medium mb-2">Trend Indicators (Visual Cheat Sheet)</h3>
+                    <p class="mb-2">
+                        We've added trend indicators that show at a glance how odds and EV are changing:
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <h4 class="text-lg font-medium mb-2">EV Trends</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑↑↑</span> Massive improvement (hitting the jackpot)</li>
-                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑↑</span> Major improvement (chef's kiss)</li>
-                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑</span> Slight improvement (heading in the right direction)</li>
-                                <li class="flex items-center"><span class="text-gray-300 text-xl mr-2">→</span> Stable (not getting better or worse)</li>
-                                <li class="flex items-center"><span class="text-orange-300 text-xl mr-2">↓</span> Slight decline (proceed with caution)</li>
-                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↓↓</span> Major decline (red flag alert)</li>
-                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↓↓↓</span> Massive decline (abort mission)</li>
+                            <h4 class="text-lg font-medium mb-1">EV Trend Indicators</h4>
+                            <ul class="list-none space-y-1">
+                                <li><span class="mr-2">🟢🟢🟢</span> EV increased significantly (>5%)</li>
+                                <li><span class="mr-2">🟢🟢</span> EV increased strongly (2-5%)</li>
+                                <li><span class="mr-2">🟢</span> EV increased slightly (0.5-2%)</li>
+                                <li><span class="mr-2">⚫</span> EV stable (±0.5%)</li>
+                                <li><span class="mr-2">🔴</span> EV decreased slightly (0.5-2%)</li>
+                                <li><span class="mr-2">🔴🔴</span> EV decreased strongly (2-5%)</li>
+                                <li><span class="mr-2">🔴🔴🔴</span> EV decreased significantly (>5%)</li>
                             </ul>
-                            <p class="mt-3 text-sm">
-                                These trend arrows appear in TWO places: next to the Current EV for quick scanning and in the Initial Details section for all trend info.
-                            </p>
                         </div>
                         <div>
-                            <h4 class="text-lg font-medium mb-2">Odds Trends</h4>
-                            <ul class="space-y-2">
-                                <li class="flex items-center"><span class="text-green-300 text-xl mr-2">↑</span> Better odds (more money for you if you win)</li>
-                                <li class="flex items-center"><span class="text-gray-300 text-xl mr-2">→</span> Stable odds (the book isn't panicking)</li>
-                                <li class="flex items-center"><span class="text-red-300 text-xl mr-2">↓</span> Worse odds (sharps might be hammering the other side)</li>
+                            <h4 class="text-lg font-medium mb-1">Odds Trend Indicators</h4>
+                            <ul class="list-none space-y-1">
+                                <li><span class="mr-2">🟢🟢🟢</span> Odds improved significantly (>30%)</li>
+                                <li><span class="mr-2">🟢🟢</span> Odds improved strongly (15-30%)</li>
+                                <li><span class="mr-2">🟢</span> Odds improved (>5%)</li>
+                                <li><span class="mr-2">⚫</span> Odds unchanged</li>
+                                <li><span class="mr-2">🔴</span> Odds worsened (>5%)</li>
+                                <li><span class="mr-2">🔴🔴</span> Odds worsened strongly (15-30%)</li>
+                                <li><span class="mr-2">🔴🔴🔴</span> Odds worsened significantly (>30%)</li>
                             </ul>
-                            <p class="mt-3 text-sm">
-                                Remember: For negative odds (-110, -250, etc.), smaller numbers are worse. For positive odds (+120, +300, etc.), bigger numbers are better.
-                            </p>
                         </div>
                     </div>
+                    <p class="mt-3 text-yellow-300 font-medium">
+                        Pro tip: For American odds, an increase in the number means better odds (whether it's becoming more positive or less negative).
+                    </p>
                 </div>
             </div>
         </div>

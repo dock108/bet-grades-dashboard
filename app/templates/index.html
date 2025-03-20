@@ -133,10 +133,9 @@
                 <div class="p-6 opportunity-row relative">
                     
                     <div class="flex flex-col sm:flex-row gap-6 already-bet-content">
-                        <!-- Left Side - Event Info & Grade -->
+                        <!-- Left Side - Event Info -->
                         <div class="w-1/4">
-                            <!-- Grade and Score -->
-                            <div class="flex items-center gap-3 mb-3">
+                            <div class="flex items-center gap-3 mb-2">
                                 <div class="rounded-full w-16 h-16 flex flex-col items-center justify-center {% if bet.grade and bet.grade.grade == 'A' %}bg-green-200
                                     {% elif bet.grade and bet.grade.grade == 'B' %}bg-blue-200
                                     {% elif bet.grade and bet.grade.grade == 'C' %}bg-purple-200
@@ -152,40 +151,85 @@
                                 </div>
                             </div>
 
-                            <!-- Match Details -->
-                            <div class="mb-4">
-                                <!-- Display the specific participant (player/team) being bet on -->
-                                {% if bet.participant and bet.participant != "None" %}
-                                <h4 class="text-lg font-medium text-gray-900">{{ bet.participant }}</h4>
-                                {% endif %}
-                                
-                                <!-- Display bet type and line -->
-                                <p class="text-sm font-medium text-gray-800 mt-1">
-                                    {{ bet.bet_type or "Unknown" }}{% if bet.bet_line and bet.bet_line != "None" %} - {{ bet.bet_line }}{% endif %}
-                                </p>
-                                
-                                <!-- Display the matchup -->
-                                <div class="text-md font-medium text-gray-700 mt-1">
-                                    {% if bet.home_team and bet.away_team %}
-                                    {{ bet.home_team }} vs {{ bet.away_team }}
-                                    {% elif bet.event_teams %}
-                                    {{ bet.event_teams }}
-                                    {% endif %}
-                                </div>
-                                
-                                <p class="text-sm text-gray-600">{{ bet.sport or "Unknown" }}{% if bet.league %} - {{ bet.league }}{% endif %}</p>
-                                
-                                {% if bet.description and bet.description != "None" %}
-                                <p class="text-sm text-gray-600 mt-1 font-medium">{{ bet.description }}</p>
+                            <!-- Display the specific participant (player/team) being bet on -->
+                            {% if bet.participant and bet.participant != "None" %}
+                            <h4 class="text-lg font-medium text-gray-900">{{ bet.participant }}</h4>
+                            {% endif %}
+                            
+                            <!-- Display bet type and line -->
+                            <p class="text-sm font-medium text-gray-800 mt-1">
+                                {{ bet.bet_type or "Unknown" }}{% if bet.bet_line and bet.bet_line != "None" %} - {{ bet.bet_line }}{% endif %}
+                            </p>
+                            
+                            <!-- Display the matchup -->
+                            <div class="text-md font-medium text-gray-700 mt-1">
+                                {% if bet.home_team and bet.away_team %}
+                                {{ bet.home_team }} vs {{ bet.away_team }}
+                                {% elif bet.event_teams %}
+                                {{ bet.event_teams }}
                                 {% endif %}
                             </div>
                             
-                            <!-- Odds & Sportsbook Info -->
-                            <div class="flex gap-4">
+                            <p class="text-sm text-gray-600">{{ bet.sport or "Unknown" }}{% if bet.league %} - {{ bet.league }}{% endif %}</p>
+                            
+                            {% if bet.description and bet.description != "None" %}
+                            <p class="text-sm text-gray-600 mt-1 font-medium">{{ bet.description }}</p>
+                            {% endif %}
+                            
+                            <div class="flex gap-4 mt-3">
                                 <div title="Current odds in American format">
                                     <dt class="text-xs font-medium text-gray-500">Odds</dt>
                                     <dd class="text-sm font-medium text-gray-900">
                                         {{ '+' if bet.odds and bet.odds > 0 }}{{ bet.odds|int if bet.odds else 'N/A' }}
+                                        
+                                        {% if bet.initial_odds is not none and bet.odds is not none %}
+                                            {% if bet.initial_odds is string %}
+                                                {% set initial_odds_val = bet.initial_odds.replace('+', '') | int %}
+                                            {% else %}
+                                                {% set initial_odds_val = bet.initial_odds %}
+                                            {% endif %}
+                                            
+                                            {% if bet.odds > 0 and initial_odds_val > 0 %}
+                                                {% set odds_improving = bet.odds > initial_odds_val %}
+                                            {% elif bet.odds < 0 and initial_odds_val < 0 %}
+                                                {% set odds_improving = bet.odds > initial_odds_val %}
+                                            {% elif bet.odds > 0 and initial_odds_val < 0 %}
+                                                {% set odds_improving = true %}
+                                            {% elif bet.odds < 0 and initial_odds_val > 0 %}
+                                                {% set odds_improving = false %}
+                                            {% else %}
+                                                {% set odds_improving = false %}
+                                            {% endif %}
+                                            
+                                            {% set odds_diff = bet.odds - initial_odds_val %}
+                                            {% set odds_diff_percent = ((bet.odds - initial_odds_val) / initial_odds_val * 100) | abs if initial_odds_val != 0 else 0 %}
+                                            {% set initial_display = '+' + initial_odds_val|string if initial_odds_val > 0 else initial_odds_val|string %}
+                                            {% set current_display = '+' + bet.odds|string if bet.odds > 0 else bet.odds|string %}
+                                            
+                                            {% if odds_improving and odds_diff != 0 %}
+                                                {% if odds_diff_percent > 30 %}
+                                                    <span title="Odds improved significantly: {{ initial_display }} → {{ current_display }}">🟢🟢🟢</span>
+                                                {% elif odds_diff_percent > 15 %}
+                                                    <span title="Odds improved strongly: {{ initial_display }} → {{ current_display }}">🟢🟢</span>
+                                                {% elif odds_diff_percent > 5 %}
+                                                    <span title="Odds improved: {{ initial_display }} → {{ current_display }}">🟢</span>
+                                                {% else %}
+                                                    <span title="Odds slightly improved: {{ initial_display }} → {{ current_display }}">🟢</span>
+                                                {% endif %}
+                                            {% elif odds_diff != 0 %}
+                                                {% if odds_diff_percent > 30 %}
+                                                    <span title="Odds worsened significantly: {{ initial_display }} → {{ current_display }}">🔴🔴🔴</span>
+                                                {% elif odds_diff_percent > 15 %}
+                                                    <span title="Odds worsened strongly: {{ initial_display }} → {{ current_display }}">🔴🔴</span>
+                                                {% elif odds_diff_percent > 5 %}
+                                                    <span title="Odds worsened: {{ initial_display }} → {{ current_display }}">🔴</span>
+                                                {% else %}
+                                                    <span title="Odds slightly worsened: {{ initial_display }} → {{ current_display }}">🔴</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span title="Odds unchanged: {{ initial_display }}">⚫</span>
+                                            {% endif %}
+                                        {% endif %}
                                     </dd>
                                 </div>
                                 <div title="The sportsbook offering these odds">
@@ -195,198 +239,150 @@
                             </div>
                         </div>
 
-                        <!-- Right Side - Metrics & Details -->
-                        <div class="w-3/4">
-                            <!-- Primary Metrics Row -->
-                            <div class="grid grid-cols-4 gap-4 mb-4">
-                                <!-- EV% -->
-                                <div title="Expected Value - Primary factor in grading (55% weight)">
-                                    <dt class="text-sm font-medium text-gray-500">Current EV</dt>
-                                    <dd class="mt-1 flex items-center">
-                                        <span class="px-2 py-1 text-sm font-semibold rounded-full
-                                            {% if bet.ev_percent and bet.ev_percent >= 10 %}bg-green-200 text-green-900
-                                            {% elif bet.ev_percent and bet.ev_percent >= 5 %}bg-lime-200 text-lime-900
-                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                            {{ "%.2f"|format(bet.ev_percent) if bet.ev_percent else 'N/A' }}%
-                                        </span>
+                        <!-- Right Side - Metrics -->
+                        <div class="w-3/4 grid grid-cols-4 gap-4">
+                            <!-- Bet Size -->
+                            {% if bet.bet_size is not none %}
+                            <div title="Recommended bet size based on Kelly criterion">
+                                <dt class="text-sm font-medium text-gray-500">Bet Size</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.bet_size > 100 %}bg-green-200 text-green-900
+                                        {% elif bet.bet_size > 50 %}bg-blue-200 text-blue-900
+                                        {% elif bet.bet_size > 0 %}bg-yellow-200 text-yellow-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        ${{ "%.0f"|format(bet.bet_size) }}
+                                    </span>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- EV% -->
+                            <div title="Expected Value - Primary factor in grading (55% weight)">
+                                <dt class="text-sm font-medium text-gray-500">Current EV</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.ev_percent and bet.ev_percent >= 10 %}bg-green-200 text-green-900
+                                        {% elif bet.ev_percent and bet.ev_percent >= 5 %}bg-lime-200 text-lime-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ "%.2f"|format(bet.ev_percent) if bet.ev_percent else 'N/A' }}%
                                         
-                                        <!-- EV Trendline -->
-                                        {% if bet.initial_ev is not none and bet.ev_percent is not none and bet.grade and bet.grade.ev_change is not none %}
-                                        <span class="ml-2 inline-flex items-center" title="EV trend from initial to current">
-                                            {% if bet.grade.ev_change > 1.5 %}
-                                                <span class="text-green-600 text-lg">↑↑↑</span>
-                                            {% elif bet.grade.ev_change > 0.5 %}
-                                                <span class="text-green-600 text-lg">↑↑</span>
-                                            {% elif bet.grade.ev_change > 0 %}
-                                                <span class="text-green-600 text-lg">↑</span>
-                                            {% elif bet.grade.ev_change == 0 %}
-                                                <span class="text-gray-600 text-lg">→</span>
-                                            {% elif bet.grade.ev_change > -0.5 %}
-                                                <span class="text-orange-600 text-lg">↓</span>
-                                            {% elif bet.grade.ev_change > -1.5 %}
-                                                <span class="text-red-600 text-lg">↓↓</span>
+                                        {% if bet.initial_ev is not none and bet.ev_percent is not none %}
+                                            {% set ev_diff = bet.ev_percent - bet.initial_ev %}
+                                            {% if ev_diff > 5 %}
+                                                <span title="EV increased significantly ({{ '%+.2f'|format(ev_diff) }}%)">🟢🟢🟢</span>
+                                            {% elif ev_diff > 2 %}
+                                                <span title="EV increased strongly ({{ '%+.2f'|format(ev_diff) }}%)">🟢🟢</span>
+                                            {% elif ev_diff > 0.5 %}
+                                                <span title="EV increased ({{ '%+.2f'|format(ev_diff) }}%)">🟢</span>
+                                            {% elif ev_diff < -5 %}
+                                                <span title="EV decreased significantly ({{ '%+.2f'|format(ev_diff) }}%)">🔴🔴🔴</span>
+                                            {% elif ev_diff < -2 %}
+                                                <span title="EV decreased strongly ({{ '%+.2f'|format(ev_diff) }}%)">🔴🔴</span>
+                                            {% elif ev_diff < -0.5 %}
+                                                <span title="EV decreased ({{ '%+.2f'|format(ev_diff) }}%)">🔴</span>
                                             {% else %}
-                                                <span class="text-red-600 text-lg">↓↓↓</span>
+                                                <span title="EV stable ({{ '%+.2f'|format(ev_diff) }}%)">⚫</span>
                                             {% endif %}
-                                        </span>
                                         {% endif %}
-                                    </dd>
-                                </div>
+                                    </span>
+                                </dd>
+                            </div>
 
-                                <!-- EV Change -->
-                                {% if bet.grade and bet.grade.ev_change is not none %}
-                                <div title="Change in EV since first seen">
-                                    <dt class="text-sm font-medium text-gray-500">EV Change</dt>
-                                    <dd class="mt-1">
-                                        <span class="px-2 py-1 text-sm font-semibold rounded-full
-                                            {% if bet.grade.ev_change > 0 %}bg-green-200 text-green-900
-                                            {% elif bet.grade.ev_change < 0 %}bg-red-200 text-red-900
-                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                            {{ '%+.2f'|format(bet.grade.ev_change) }}%
-                                        </span>
-                                    </dd>
-                                </div>
-                                {% endif %}
+                            <!-- EV Change -->
+                            {% if bet.grade and bet.grade.ev_change is not none %}
+                            <div title="Change in EV since first seen">
+                                <dt class="text-sm font-medium text-gray-500">EV Change</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                        {% if bet.grade.ev_change > 0 %}bg-green-200 text-green-900
+                                        {% elif bet.grade.ev_change < 0 %}bg-red-200 text-red-900
+                                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                        {{ '%+.2f'|format(bet.grade.ev_change) }}%
+                                    </span>
+                                </dd>
+                            </div>
+                            {% endif %}
 
-                                <!-- Time -->
-                                <div title="Time until event - Affects confidence and grading">
-                                    <dt class="text-sm font-medium text-gray-500">Time Left</dt>
-                                    <dd class="mt-1">
-                                        <span class="px-2 py-1 text-sm font-semibold rounded-full 
-                                            {% if bet.event_time and now is defined %}
-                                                {% if bet.event_time is not string %}
-                                                    {% set time_diff = (bet.event_time - now).total_seconds() %}
-                                                    {% if time_diff > 43200 %}bg-green-200 text-green-900
-                                                    {% elif time_diff > 21600 %}bg-blue-200 text-blue-900
-                                                    {% elif time_diff > 10800 %}bg-yellow-200 text-yellow-900
-                                                    {% elif time_diff > 3600 %}bg-orange-200 text-orange-900
-                                                    {% elif time_diff > 0 %}bg-red-200 text-red-900
-                                                    {% else %}bg-gray-100 text-gray-800{% endif %}
-                                                {% else %}
-                                                    bg-gray-100 text-gray-800
-                                                {% endif %}
+                            <!-- Time -->
+                            <div title="Time until event - Affects confidence and grading">
+                                <dt class="text-sm font-medium text-gray-500">Time Left</dt>
+                                <dd class="mt-1">
+                                    <span class="px-2 py-1 text-sm font-semibold rounded-full 
+                                        {% if bet.event_time and now is defined %}
+                                            {% if bet.event_time is not string %}
+                                                {% set time_diff = (bet.event_time - now).total_seconds() %}
+                                                {% if time_diff > 43200 %}bg-green-200 text-green-900
+                                                {% elif time_diff > 21600 %}bg-blue-200 text-blue-900
+                                                {% elif time_diff > 10800 %}bg-yellow-200 text-yellow-900
+                                                {% elif time_diff > 3600 %}bg-orange-200 text-orange-900
+                                                {% elif time_diff > 0 %}bg-red-200 text-red-900
+                                                {% else %}bg-gray-100 text-gray-800{% endif %}
                                             {% else %}
                                                 bg-gray-100 text-gray-800
-                                            {% endif %}">
-                                            {% if bet.event_time and now is defined %}
-                                                {% if bet.event_time is not string %}
-                                                    {% set time_diff = (bet.event_time - now).total_seconds() %}
-                                                    {% if time_diff > 86400 %}
-                                                        {{ (time_diff / 86400)|int }}d
-                                                    {% elif time_diff > 3600 %}
-                                                        {{ (time_diff / 3600)|int }}h
-                                                    {% elif time_diff > 60 %}
-                                                        {{ (time_diff / 60)|int }}m
-                                                    {% elif time_diff > 0 %}
-                                                        Soon
-                                                    {% else %}
-                                                        Live
-                                                    {% endif %}
+                                            {% endif %}
+                                        {% else %}
+                                            bg-gray-100 text-gray-800
+                                        {% endif %}">
+                                        {% if bet.event_time and now is defined %}
+                                            {% if bet.event_time is not string %}
+                                                {% set time_diff = (bet.event_time - now).total_seconds() %}
+                                                {% if time_diff > 86400 %}
+                                                    {{ (time_diff / 86400)|int }}d
+                                                {% elif time_diff > 3600 %}
+                                                    {{ (time_diff / 3600)|int }}h
+                                                {% elif time_diff > 60 %}
+                                                    {{ (time_diff / 60)|int }}m
+                                                {% elif time_diff > 0 %}
+                                                    Soon
                                                 {% else %}
-                                                    N/A
+                                                    Live
                                                 {% endif %}
                                             {% else %}
                                                 N/A
                                             {% endif %}
-                                        </span>
-                                    </dd>
-                                </div>
-
-                                <!-- Bet Size -->
-                                {% if bet.bet_size is not none %}
-                                <div title="Recommended bet size based on Kelly criterion">
-                                    <dt class="text-sm font-medium text-gray-500">Bet Size</dt>
-                                    <dd class="mt-1">
-                                        <span class="px-2 py-1 text-sm font-semibold rounded-full
-                                            {% if bet.bet_size > 100 %}bg-green-200 text-green-900
-                                            {% elif bet.bet_size > 50 %}bg-blue-200 text-blue-900
-                                            {% elif bet.bet_size > 0 %}bg-yellow-200 text-yellow-900
-                                            {% else %}bg-gray-100 text-gray-800{% endif %}">
-                                            ${{ "%.0f"|format(bet.bet_size) }}
-                                        </span>
-                                    </dd>
-                                </div>
-                                {% endif %}
+                                        {% else %}
+                                            N/A
+                                        {% endif %}
+                                    </span>
+                                </dd>
                             </div>
 
-                            <!-- Secondary Metrics -->
-                            <div class="grid grid-cols-2 gap-6 mb-4">
-                                <!-- Probabilities -->
-                                <div>
-                                    <div class="mb-2">
-                                        <dt class="text-sm font-medium text-gray-500">Win Probability</dt>
-                                        <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
-                                    </div>
-                                    <div>
-                                        <dt class="text-sm font-medium text-gray-500">Market Probability</dt>
-                                        <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
-                                    </div>
+                            <!-- Probabilities -->
+                            <div class="col-span-2">
+                                <!-- Win Probability -->
+                                <div title="Our calculated probability that this bet will win">
+                                    <dt class="text-sm font-medium text-gray-500">Win Probability</dt>
+                                    <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
                                 </div>
-                                
-                                <!-- Initial Details -->
-                                {% if bet.initial_odds or bet.initial_ev is not none %}
-                                <div>
+
+                                <!-- Market Probability -->
+                                <div class="mt-2" title="The implied probability based on the current market odds">
+                                    <dt class="text-sm font-medium text-gray-500">Market Probability</dt>
+                                    <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
+                                </div>
+                            </div>
+                            
+                            {% if bet.initial_odds or bet.initial_ev is not none %}
+                            <div class="col-span-2">
+                                <div title="Initial information when the bet was first seen">
                                     <dt class="text-sm font-medium text-gray-500">Initial Details</dt>
                                     <dd class="text-sm font-medium text-gray-900">
                                         <div class="flex flex-col gap-1 mt-1">
                                             {% if bet.initial_ev is not none %}
-                                            <span class="flex items-center">
-                                                EV: {{ "%.2f"|format(bet.initial_ev) }}%
-                                                {% if bet.grade and bet.grade.ev_change is not none %}
-                                                    {% if bet.grade.ev_change > 1.5 %}
-                                                        <span class="ml-2 text-green-600" title="EV has massively improved">↑↑↑</span>
-                                                    {% elif bet.grade.ev_change > 0.5 %}
-                                                        <span class="ml-2 text-green-600" title="EV has significantly improved">↑↑</span>
-                                                    {% elif bet.grade.ev_change > 0 %}
-                                                        <span class="ml-2 text-green-600" title="EV has slightly improved">↑</span>
-                                                    {% elif bet.grade.ev_change == 0 %}
-                                                        <span class="ml-2 text-gray-600" title="EV is stable">→</span>
-                                                    {% elif bet.grade.ev_change > -0.5 %}
-                                                        <span class="ml-2 text-orange-600" title="EV has slightly decreased">↓</span>
-                                                    {% elif bet.grade.ev_change > -1.5 %}
-                                                        <span class="ml-2 text-red-600" title="EV has significantly decreased">↓↓</span>
-                                                    {% else %}
-                                                        <span class="ml-2 text-red-600" title="EV has massively decreased">↓↓↓</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
+                                            <span>EV: {{ "%.2f"|format(bet.initial_ev) }}%</span>
                                             {% endif %}
                                             
                                             {% if bet.initial_odds %}
-                                            <span class="flex items-center">
-                                                Odds: {% if bet.initial_odds is string %}
+                                            <span>Odds: {% if bet.initial_odds is string %}
                                                     {% if bet.initial_odds.startswith('-') %}
-                                                        {{ bet.initial_odds }}
+                                                        {{ bet.initial_odds.split('.')[0] }}
                                                     {% else %}
-                                                        +{{ bet.initial_odds.lstrip('+') }}
+                                                        +{{ bet.initial_odds.lstrip('+').split('.')[0] }}
                                                     {% endif %}
                                                   {% else %}
                                                     {% if bet.initial_odds > 0 %}+{% endif %}{{ bet.initial_odds|int }}
-                                                  {% endif %}
-                                                {% if bet.initial_odds and bet.odds %}
-                                                    {% if bet.initial_odds is string %}
-                                                        {% set initial_odds_num = bet.initial_odds.lstrip('+') | int %}
-                                                    {% else %}
-                                                        {% set initial_odds_num = bet.initial_odds %}
-                                                    {% endif %}
-                                                    
-                                                    {% if bet.odds is string %}
-                                                        {% set current_odds_num = bet.odds.lstrip('+') | int %}
-                                                    {% else %}
-                                                        {% set current_odds_num = bet.odds %}
-                                                    {% endif %}
-                                                    
-                                                    {% if (initial_odds_num > 0 and current_odds_num > initial_odds_num) or 
-                                                          (initial_odds_num < 0 and current_odds_num < initial_odds_num) %}
-                                                        <span class="ml-2 text-green-600" title="Odds have improved">↑</span>
-                                                    {% elif (initial_odds_num > 0 and current_odds_num < initial_odds_num) or
-                                                           (initial_odds_num < 0 and current_odds_num > initial_odds_num) %}
-                                                        <span class="ml-2 text-red-600" title="Odds have worsened">↓</span>
-                                                    {% else %}
-                                                        <span class="ml-2 text-gray-600" title="Odds are stable">→</span>
-                                                    {% endif %}
-                                                {% endif %}
-                                            </span>
+                                                  {% endif %}</span>
                                             {% endif %}
                                             
                                             {% if bet.first_seen %}
@@ -413,11 +409,11 @@
                                         </div>
                                     </dd>
                                 </div>
-                                {% endif %}
                             </div>
+                            {% endif %}
 
                             <!-- Actions Row -->
-                            <div class="flex justify-end mt-2">
+                            <div class="col-span-4 flex justify-end mt-4">
                                 {% if bet.grade and bet.grade.grade not in ['D', 'F'] and sportsbook_counts.get(bet.sportsbook, 0) > 1 %}
                                 <div class="flex-grow">
                                     <button 

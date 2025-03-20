@@ -111,33 +111,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Modified grading system to use absolute criteria instead of distribution percentages
 - Updated Distribution Statistics section in explainer document to remove bell curve references
 
-## [1.1.4] - 2024-03-26
+## [1.1.4] - 2024-03-27
 
 ### Changed
-- Removed Bayesian Confidence display from the dashboard UI as it was causing confusion
-- Added intuitive trend indicators (↑, →, ↓) in the Initial Details section to show:
-  - EV trends (significant improvement, slight improvement, stable, slight decline, significant decline)
-  - Odds movement (better, stable, worse)
-- Added detailed explanation of trend indicators in the explainer document
-- Simplified the UI to focus on actionable data points
+- Removed Bayesian Confidence display from the dashboard UI
+- Updated the explainer document to clarify that confidence calculations happen behind the scenes
+- Simplified the bet metrics display for better user understanding
 
-## [1.1.5] - 2024-03-27
+## [1.1.5] - 2024-03-28
 
 ### Added
-- Added prominent EV trendline next to Current EV for at-a-glance trend visibility
-- Enhanced EV trend indicators with expanded levels (↑↑↑, ↑↑, ↑, →, ↓, ↓↓, ↓↓↓) to show magnitude of change
-- Updated the explainer document with detailed information about the new trendline indicators
+- Trend indicators (arrows and icons) for EV and odds to visually show changes from initial values
+- Multiple levels of indicators to show magnitude of changes (slight, moderate, strong, significant)
+- New explainer section documenting the trend indicator system
+- Visual feedback to quickly identify improving or declining betting opportunities
 
 ## [1.1.6] - 2024-03-28
 
+### Fixed
+- Fixed trend indicators to correctly show improving or worsening trend direction
+- Added actual value changes to trend indicator hover text for better context
+- Improved logic for determining when odds are improving or worsening
+- Added clear change values in tooltips to see exact differences between initial and current values
+
+## [1.1.7] - 2024-03-28
+
 ### Changed
-- Completely reorganized bet card layout for better visual hierarchy and logical grouping
-- Grouped related metrics together in a more intuitive structure:
-  - Primary metrics (EV, EV Change, Time Left, Bet Size) in the top row
-  - Secondary metrics (Probabilities, Initial Details) in a structured grid
-  - Match details and odds information in a cleaner left sidebar
-- Improved spacing and visual separation between different information sections
-- Enhanced overall card readability with clearer section organization
+- Simplified trend indicators to use green dots for positive changes, red dots for negative changes, and grey dots for neutral
+- Removed decimal places from odds in Initial Details section for cleaner display
+- Updated the explainer document to reflect the new trend indicator system
 
 ## [0.9.0] - 2024-03-15
 

@@ -13,7 +13,8 @@ class Bet:
                  home_team=None, away_team=None, sport=None, league=None, description=None, participant=None,
                  bet_line=None, bet_type=None, bet_category=None, odds=None, 
                  sportsbook=None, bet_size=None, win_probability=None, edge=None,
-                 market_implied_prob=None, betid_timestamp=None, created_at=None, updated_at=None):
+                 market_implied_prob=None, betid_timestamp=None, created_at=None, updated_at=None,
+                 initial_odds=None, initial_ev=None, initial_line=None, first_seen=None, ev_change=None):
         self.id = id
         self.bet_id = bet_id
         self.timestamp = timestamp  # Keep timestamp as is - already in correct timezone
@@ -73,6 +74,13 @@ class Bet:
         self.updated_at = updated_at
         self.grade = None  # Will be set later if needed
         
+        # Initial bet details
+        self.initial_odds = initial_odds
+        self.initial_ev = float(initial_ev) if initial_ev is not None else None
+        self.initial_line = initial_line
+        self.first_seen = first_seen
+        self.ev_change = float(ev_change) if ev_change is not None else None
+        
         # Set event_teams based on home_team and away_team if available
         if self.home_team and self.away_team:
             self.event_teams = f"{self.home_team} vs {self.away_team}"
@@ -92,7 +100,8 @@ class Bet:
             'id', 'bet_id', 'timestamp', 'ev_percent', 'event_time', 'home_team', 'away_team',
             'sport', 'league', 'description', 'participant', 'bet_line', 'bet_type', 
             'bet_category', 'odds', 'sportsbook', 'bet_size', 'win_probability', 'edge', 
-            'market_implied_prob', 'betid_timestamp', 'created_at', 'updated_at'
+            'market_implied_prob', 'betid_timestamp', 'created_at', 'updated_at',
+            'initial_odds', 'initial_ev', 'initial_line', 'first_seen', 'ev_change'
         }
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}
         
@@ -203,7 +212,12 @@ class Bet:
                 "market_implied_prob": self.market_implied_prob,
                 "betid_timestamp": self.betid_timestamp,
                 "created_at": self.created_at,
-                "updated_at": self.updated_at
+                "updated_at": self.updated_at,
+                "initial_odds": self.initial_odds,
+                "initial_ev": self.initial_ev,
+                "initial_line": self.initial_line,
+                "first_seen": self.first_seen,
+                "ev_change": self.ev_change
             }
             
             # Handle bet_line specifically to avoid saving "None" string
@@ -223,12 +237,13 @@ class Bet:
                 )
                 
                 # Save initial bet details (will only insert if bet_id doesn't exist due to ON CONFLICT DO NOTHING)
-                if self.ev_percent is not None or self.bet_line is not None:
+                if self.ev_percent is not None or self.bet_line is not None or self.odds is not None:
                     initial_data = {
                         "bet_id": self.bet_id,
                         "initial_ev": float(self.ev_percent.replace('%', '')) if isinstance(self.ev_percent, str) else self.ev_percent,
                         "initial_line": self.bet_line,
-                        "first_seen": self.timestamp
+                        "first_seen": self.timestamp,
+                        "initial_odds": str(self.odds) if self.odds is not None else None
                     }
                     execute_query(
                         table_name="initial_bet_details",
@@ -244,12 +259,13 @@ class Bet:
                 )
                 
                 # Save initial bet details for new bet
-                if self.ev_percent is not None or self.bet_line is not None:
+                if self.ev_percent is not None or self.bet_line is not None or self.odds is not None:
                     initial_data = {
                         "bet_id": data["bet_id"],
                         "initial_ev": float(self.ev_percent.replace('%', '')) if isinstance(self.ev_percent, str) else self.ev_percent,
                         "initial_line": self.bet_line,
-                        "first_seen": self.timestamp
+                        "first_seen": self.timestamp,
+                        "initial_odds": str(self.odds) if self.odds is not None else None
                     }
                     execute_query(
                         table_name="initial_bet_details",
@@ -699,9 +715,14 @@ class BetGrade:
         now = datetime.now(pytz.UTC)
         
         # Check if we need to update stats
-        if (not force_update and cls._dist_stats['mean'] is not None and
+        should_return_cached = (
+            not force_update and 
+            cls._dist_stats['mean'] is not None and
             cls._dist_stats['last_update'] is not None and
-            (now - cls._dist_stats['last_update']).total_seconds() < cls._dist_stats['update_interval']):
+            (now - cls._dist_stats['last_update']).total_seconds() < cls._dist_stats['update_interval']
+        )
+        
+        if should_return_cached:
             return cls._dist_stats
         
         try:

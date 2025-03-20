@@ -160,6 +160,46 @@ class BettingService:
                 grade_order = {"A": 0, "B": 1, "C": 2, "D": 3, "F": 4, None: 5}
                 bets.sort(key=lambda x: (grade_order.get(x.grade.grade if x.grade else None, 5)))
             
+            # Fetch initial bet details for all bets
+            if bets:
+                bet_ids = [bet.bet_id for bet in bets]
+                
+                # Log the bet IDs we're looking for
+                logger.info(f"Looking for initial details for bet_ids: {bet_ids[:5]}...")
+                
+                # Initial bet details uses 'in' operator instead of exact match for arrays
+                initial_details_result = execute_query(
+                    table_name="initial_bet_details",
+                    query_type="select",
+                    filters={"bet_id": {"operator": "in", "value": bet_ids}}
+                )
+                
+                # Create a lookup dictionary for initial details
+                initial_details_lookup = {}
+                for row in initial_details_result:
+                    bet_id = row.get("bet_id")
+                    if bet_id:
+                        initial_details_lookup[bet_id] = row
+                
+                logger.info(f"Retrieved initial details for {len(initial_details_lookup)}/{len(bet_ids)} bets")
+                
+                # Attach initial details to bets
+                for bet in bets:
+                    initial_details = initial_details_lookup.get(bet.bet_id)
+                    if initial_details:
+                        bet.initial_odds = initial_details.get('initial_odds')
+                        bet.initial_ev = initial_details.get('initial_ev')
+                        bet.initial_line = initial_details.get('initial_line')
+                        bet.first_seen = initial_details.get('first_seen')
+                        
+                        # Calculate EV change if current and initial EV are available
+                        if bet.ev_percent is not None and bet.initial_ev is not None:
+                            try:
+                                bet.ev_change = float(bet.ev_percent) - float(bet.initial_ev)
+                            except (ValueError, TypeError):
+                                logger.warning(f"Could not calculate EV change for bet {bet.bet_id}")
+                                bet.ev_change = None
+            
             return bets
         except Exception as e:
             logger.error(f"Error getting active bets: {str(e)}")

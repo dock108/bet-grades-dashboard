@@ -221,41 +221,45 @@
                                                             {% set initial_odds_val = bet.initial_odds %}
                                                         {% endif %}
                                                         
-                                                        {% set odds_diff = bet.odds - initial_odds_val %}
-                                                        {% set crosses_zero = (bet.odds > 0 and initial_odds_val < 0) or (bet.odds < 0 and initial_odds_val > 0) %}
+                                                        {% if bet.odds > 0 and initial_odds_val > 0 %}
+                                                            {% set odds_improving = bet.odds > initial_odds_val %}
+                                                        {% elif bet.odds < 0 and initial_odds_val < 0 %}
+                                                            {% set odds_improving = bet.odds > initial_odds_val %}
+                                                        {% elif bet.odds > 0 and initial_odds_val < 0 %}
+                                                            {% set odds_improving = true %}
+                                                        {% elif bet.odds < 0 and initial_odds_val > 0 %}
+                                                            {% set odds_improving = false %}
+                                                        {% else %}
+                                                            {% set odds_improving = false %}
+                                                        {% endif %}
                                                         
-                                                        {% if crosses_zero %}
-                                                            {% if bet.odds > initial_odds_val %}
+                                                        {% set odds_diff = bet.odds - initial_odds_val %}
+                                                        {% set odds_diff_percent = ((bet.odds - initial_odds_val) / initial_odds_val * 100) | abs if initial_odds_val != 0 else 0 %}
+                                                        {% set initial_display = '+' + initial_odds_val|string if initial_odds_val > 0 else initial_odds_val|string %}
+                                                        {% set current_display = '+' + bet.odds|string if bet.odds > 0 else bet.odds|string %}
+                                                        
+                                                        {% if odds_improving and odds_diff != 0 %}
+                                                            {% if odds_diff_percent > 30 %}
+                                                                <span title="Odds improved significantly: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑↑↑</span>
+                                                            {% elif odds_diff_percent > 15 %}
+                                                                <span title="Odds improved strongly: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑↑</span>
+                                                            {% elif odds_diff_percent > 5 %}
                                                                 <span title="Odds improved: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑</span>
                                                             {% else %}
-                                                                <span title="Odds worsened: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓</span>
+                                                                <span title="Odds slightly improved: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑</span>
                                                             {% endif %}
-                                                        {% else %}
-                                                            {% set odds_improving = bet.odds > initial_odds_val %}
-                                                            {% set odds_diff_percent = ((bet.odds - initial_odds_val) / initial_odds_val * 100) | abs if initial_odds_val != 0 else 0 %}
-                                                            {% set initial_display = '+' + initial_odds_val|string if initial_odds_val > 0 else initial_odds_val|string %}
-                                                            {% set current_display = '+' + bet.odds|string if bet.odds > 0 else bet.odds|string %}
-                                                            
-                                                            {% if odds_improving and odds_diff != 0 %}
-                                                                {% if odds_diff_percent > 30 %}
-                                                                    <span title="Odds improved significantly: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑↑↑</span>
-                                                                {% elif odds_diff_percent > 15 %}
-                                                                    <span title="Odds improved strongly: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑↑</span>
-                                                                {% else %}
-                                                                    <span title="Odds improved: {{ initial_display }} → {{ current_display }}" class="text-green-600 font-bold">↑</span>
-                                                                {% endif %}
-                                                            {% elif odds_diff != 0 %}
-                                                                {% if odds_diff_percent > 30 %}
-                                                                    <span title="Odds worsened significantly: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓↓↓</span>
-                                                                {% elif odds_diff_percent > 15 %}
-                                                                    <span title="Odds worsened strongly: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓↓</span>
-                                                                {% else %}
-                                                                    <span title="Odds worsened: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓</span>
-                                                                {% endif %}
+                                                        {% elif odds_diff != 0 %}
+                                                            {% if odds_diff_percent > 30 %}
+                                                                <span title="Odds worsened significantly: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓↓↓</span>
+                                                            {% elif odds_diff_percent > 15 %}
+                                                                <span title="Odds worsened strongly: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓↓</span>
+                                                            {% elif odds_diff_percent > 5 %}
+                                                                <span title="Odds worsened: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓</span>
+                                                            {% else %}
+                                                                <span title="Odds worsened slightly: {{ initial_display }} → {{ current_display }}" class="text-red-600 font-bold">↓</span>
                                                             {% endif %}
                                                         {% endif %}
-                                                    {% endif %}
-                                                </dd>
+                                                    </dd>
                                             </div>
                                             
                                             <!-- EV% -->

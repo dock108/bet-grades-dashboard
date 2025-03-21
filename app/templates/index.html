@@ -60,58 +60,58 @@
             <!-- Current Opportunities -->
             <div class="bg-white p-4 rounded-lg border border-gray-200">
                 <div class="flex flex-col items-center justify-center text-center">
-                    <span class="text-xl mb-1">📊</span>
-                    <h3 class="text-sm font-medium text-gray-500 mb-1">Current Opportunities</h3>
-                    <span class="text-lg font-semibold text-gray-900">{{ summary_stats.total_bets }}</span>
+                    <span class="text-2xl mb-1">📊</span>
+                    <h3 class="text-base font-medium text-gray-500 mb-1">Current Opportunities</h3>
+                    <span class="text-xl font-semibold text-gray-900">{{ summary_stats.total_bets }}</span>
                 </div>
             </div>
 
             <!-- Grade Distribution -->
             <div class="bg-white p-4 rounded-lg border border-gray-200">
-                <h3 class="text-sm font-medium text-gray-500 mb-3">Grade Distribution</h3>
+                <h3 class="text-base font-medium text-gray-500 mb-3">Grade Distribution</h3>
                 <div class="grid grid-cols-5 gap-4">
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">A</span>
-                        <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.A if summary_stats.grade_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">A</span>
+                        <span class="text-base font-semibold text-green-600">{{ summary_stats.grade_distribution.A if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">B</span>
-                        <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.B if summary_stats.grade_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">B</span>
+                        <span class="text-base font-semibold text-blue-600">{{ summary_stats.grade_distribution.B if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">C</span>
-                        <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.C if summary_stats.grade_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">C</span>
+                        <span class="text-base font-semibold text-purple-600">{{ summary_stats.grade_distribution.C if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">D</span>
-                        <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.grade_distribution.D if summary_stats.grade_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">D</span>
+                        <span class="text-base font-semibold text-yellow-600">{{ summary_stats.grade_distribution.D if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">F</span>
-                        <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.F if summary_stats.grade_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">F</span>
+                        <span class="text-base font-semibold text-red-600">{{ summary_stats.grade_distribution.F if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- Time to Event -->
             <div class="bg-white p-4 rounded-lg border border-gray-200">
-                <h3 class="text-sm font-medium text-gray-500 mb-3">Time to Event</h3>
+                <h3 class="text-base font-medium text-gray-500 mb-3">Time to Event</h3>
                 <div class="grid grid-cols-4 gap-4">
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">0-3h</span>
-                        <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate + summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">0-3h</span>
+                        <span class="text-base font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate + summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">3-6h</span>
-                        <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">3-6h</span>
+                        <span class="text-base font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">6-12h</span>
-                        <span class="text-sm font-semibold text-purple-600">{{ summary_stats.time_distribution.Monitor if summary_stats.time_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">6-12h</span>
+                        <span class="text-base font-semibold text-purple-600">{{ summary_stats.time_distribution.Monitor if summary_stats.time_distribution else 0 }}</span>
                     </div>
                     <div class="flex flex-col items-center">
-                        <span class="text-xs font-medium text-gray-500">12h+</span>
-                        <span class="text-sm font-semibold text-blue-600">{{ summary_stats.time_distribution.Plan if summary_stats.time_distribution else 0 }}</span>
+                        <span class="text-sm font-medium text-gray-500">12h+</span>
+                        <span class="text-base font-semibold text-blue-600">{{ summary_stats.time_distribution.Plan if summary_stats.time_distribution else 0 }}</span>
                     </div>
                 </div>
             </div>
@@ -187,7 +187,7 @@
                                     
                                     <!-- Right side - Metrics Grid -->
                                     <div class="w-2/3">
-                                        <div class="grid grid-cols-4 gap-x-2 gap-y-2">
+                                        <div class="grid grid-cols-4 gap-x-2 gap-y-3">
                                             <!-- Top row: Odds, Current EV, Time Left, Bet Size -->
                                             <!-- Odds -->
                                             <div>

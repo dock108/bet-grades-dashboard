@@ -187,10 +187,10 @@
                                     
                                     <!-- Right side - Metrics Grid -->
                                     <div class="w-full md:w-2/3">
-                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-2 gap-y-3">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-2 gap-y-3 md:grid-rows-2">
                                             <!-- Top row: Odds, Current EV, Time Left, Bet Size -->
                                             <!-- Odds -->
-                                            <div>
+                                            <div class="md:col-start-1 md:row-start-1">
                                                 <dt class="text-xs font-medium text-gray-500">Odds</dt>
                                                 <dd class="text-sm font-medium text-gray-900 flex items-center gap-1">
                                                     {{ '+' if bet.odds and bet.odds > 0 }}{{ bet.odds|int if bet.odds else 'N/A' }}
@@ -240,7 +240,7 @@
                                             </div>
                                             
                                             <!-- EV% -->
-                                            <div>
+                                            <div class="md:col-start-2 md:row-start-1">
                                                 <dt class="text-xs font-medium text-gray-500">Current EV</dt>
                                                 <dd class="flex items-center gap-1">
                                                     <span class="px-2 py-0.5 text-sm font-medium rounded
@@ -270,7 +270,7 @@
                                             </div>
                                             
                                             <!-- Time Left -->
-                                            <div>
+                                            <div class="md:col-start-3 md:row-start-1">
                                                 <dt class="text-xs font-medium text-gray-500">Time Left</dt>
                                                 <dd>
                                                     <span class="px-2 py-0.5 text-sm font-medium rounded
@@ -315,7 +315,7 @@
                                             
                                             <!-- Bet Size -->
                                             {% if bet.bet_size is not none %}
-                                            <div>
+                                            <div class="md:col-start-4 md:row-start-1">
                                                 <dt class="text-xs font-medium text-gray-500">Bet Size</dt>
                                                 <dd>
                                                     <span class="px-2 py-0.5 text-sm font-medium rounded
@@ -331,39 +331,47 @@
                                             
                                             <!-- Bottom row: Sportsbook, Win Probability, Market Probability, Parlay Button -->
                                             <!-- Sportsbook -->
-                                            <div>
+                                            <div class="md:col-start-1 md:row-start-2">
                                                 <dt class="text-xs font-medium text-gray-500">Sportsbook</dt>
                                                 <dd class="text-sm font-medium text-gray-900">{{ bet.sportsbook or "Unknown" }}</dd>
                                             </div>
                                             
                                             <!-- Win Probability - Hidden on mobile -->
-                                            <div class="hidden md:block">
+                                            <div class="hidden md:block md:col-start-2 md:row-start-2">
                                                 <dt class="text-xs font-medium text-gray-500">Win Probability</dt>
                                                 <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
                                             </div>
                                             
                                             <!-- Market Probability - Hidden on mobile -->
-                                            <div class="hidden md:block">
+                                            <div class="hidden md:block md:col-start-3 md:row-start-2">
                                                 <dt class="text-xs font-medium text-gray-500">Market Probability</dt>
                                                 <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
                                             </div>
                                             
-                                            <!-- Parlay Button - Mobile friendly placement -->
-                                            {% if bet.grade and bet.grade.grade not in ['D', 'F'] and sportsbook_counts.get(bet.sportsbook, 0) > 1 %}
-                                            <div>
-                                                <dd class="mt-1">
-                                                    <button 
-                                                        onclick="loadParlayBets('{{ bet.sportsbook }}')"
-                                                        class="inline-flex items-center px-2 py-1.5 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors"
-                                                        title="View other high-quality bets from {{ bet.sportsbook }} that could be parlayed with this bet"
-                                                    >
-                                                        <span class="mr-1">🎲</span> Parlay Options
-                                                        <span class="ml-1 text-xs bg-indigo-500 text-white px-1.5 py-0.5 rounded-full">
-                                                            {{ sportsbook_counts.get(bet.sportsbook, 0) - 1 }}
-                                                        </span>
-                                                    </button>
-                                                </dd>
-                                            </div>
+                                            <!-- Parlay Button - Under Bet Size on desktop, next to Sportsbook on mobile -->
+                                            {% if bet.grade and bet.grade.grade not in ['D', 'F'] %}
+                                                {% set valid_parlay_count = namespace(count=0) %}
+                                                {% for other_bet in current_bets %}
+                                                    {% if other_bet.sportsbook == bet.sportsbook and other_bet != bet and other_bet.grade and other_bet.grade.grade not in ['D', 'F'] %}
+                                                        {% set valid_parlay_count.count = valid_parlay_count.count + 1 %}
+                                                    {% endif %}
+                                                {% endfor %}
+                                                {% if valid_parlay_count.count >= 1 %}
+                                                <div class="md:col-start-4 md:row-start-2">
+                                                    <dd class="mt-1">
+                                                        <button 
+                                                            onclick="loadParlayBets('{{ bet.sportsbook }}')"
+                                                            class="inline-flex items-center px-2 py-1.5 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors"
+                                                            title="View other high-quality bets from {{ bet.sportsbook }} that could be parlayed with this bet"
+                                                        >
+                                                            <span class="mr-1">🎲</span> Parlay Options
+                                                            <span class="ml-1 text-xs bg-indigo-500 text-white px-1.5 py-0.5 rounded-full">
+                                                                {{ valid_parlay_count.count }}
+                                                            </span>
+                                                        </button>
+                                                    </dd>
+                                                </div>
+                                                {% endif %}
                                             {% endif %}
                                         </div>
                                     </div>

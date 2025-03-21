@@ -5,6 +5,19 @@ All notable changes to the Grade Dashboard project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-03-21
+
+### Changed
+- Improved mobile responsiveness:
+  - Redesigned bet cards to stack content vertically on mobile and horizontally on desktop
+  - Changed metrics grid from 4 columns to 2 columns on mobile devices
+  - Hidden Win Probability and Market Probability metrics on mobile to improve usability
+  - Adjusted spacing and alignment for better mobile viewing
+  - Optimized Parlay Options button positioning on mobile devices
+- Increased all font sizes in the Quick Stats section by 2 points for better readability
+- Added more vertical spacing between bet card rows for improved visual separation
+- Improved Current Opportunities card with centered content
+
 ## [1.1.3] - 2025-03-21
 
 ### Changed

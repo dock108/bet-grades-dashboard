@@ -13,10 +13,10 @@ A Flask web application for tracking and analyzing betting opportunities with a 
   - Yellow: 3-6 hours
   - Purple: 6-12 hours
   - Blue: 12+ hours
-- Sportsbook distribution tracking
 - Trend indicators showing changes in odds and EV since first seen
 - Explainer page with detailed information about the grading system
 - Parlay calculator for multi-leg bets
+- Mobile-responsive design optimized for all device sizes
 
 ## Tech Stack
 
@@ -100,6 +100,15 @@ The application will be available at http://localhost:5000.
 1. **Home Dashboard**: View all active betting opportunities with grades and time-to-event indicators
 2. **Rankings Page**: View betting opportunities sorted by priority
 3. **Explainer Page**: Learn about the grading system and methodology
+
+## Mobile Experience
+
+The dashboard is fully responsive with optimizations for mobile devices:
+- Streamlined layout with vertical stacking of bet details
+- Simplified metrics display that prioritizes the most important information
+- Hidden secondary metrics (Win/Market Probability) to reduce clutter
+- Optimized spacing and font sizes for mobile viewing
+- Touch-friendly buttons and interactive elements
 
 ## API Endpoints
 

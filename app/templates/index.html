@@ -124,7 +124,7 @@
         <div class="col-span-12">
             <div class="bg-white shadow-sm rounded-lg divide-y divide-gray-200">
                 {% for bet in current_bets %}
-                <div class="p-3 sm:p-3 opportunity-row relative">
+                <div class="p-3 opportunity-row relative">
                     <div class="bg-white rounded-lg shadow-md overflow-hidden border-l-4
                         {% if bet.grade and bet.grade.grade == 'A' %}border-green-500
                         {% elif bet.grade and bet.grade.grade == 'B' %}border-blue-500
@@ -135,7 +135,7 @@
                         
                         <div class="flex flex-col already-bet-content">
                             <!-- Header with Grade -->
-                            <div class="bg-gray-50 p-2 sm:p-2 flex justify-between items-center border-b border-gray-200">
+                            <div class="bg-gray-50 p-2 flex justify-between items-center border-b border-gray-200">
                                 <div class="flex items-center gap-2">
                                     <div class="rounded-md w-8 h-8 flex items-center justify-center
                                         {% if bet.grade and bet.grade.grade == 'A' %}bg-green-100 text-green-700
@@ -161,11 +161,11 @@
                             </div>
                             
                             <!-- Main Card Content -->
-                            <div class="p-3 sm:p-3 pb-4 sm:pb-3">
+                            <div class="p-3">
                                 <!-- Flex container for better space usage -->
-                                <div class="flex flex-col sm:flex-row">
+                                <div class="flex flex-col md:flex-row">
                                     <!-- Left side - Bet Details -->
-                                    <div class="w-full sm:w-1/3 pr-0 sm:pr-2 mb-3 sm:mb-0">
+                                    <div class="w-full md:w-1/3 pr-0 md:pr-2 mb-3 md:mb-0">
                                         {% if bet.participant and bet.participant != "None" %}
                                         <h3 class="text-lg font-medium text-gray-900 leading-tight">{{ bet.participant }}</h3>
                                         {% endif %}
@@ -186,8 +186,8 @@
                                     </div>
                                     
                                     <!-- Right side - Metrics Grid -->
-                                    <div class="w-full sm:w-2/3">
-                                        <div class="grid grid-cols-4 gap-x-2 gap-y-3 md:grid-cols-4 sm:grid-cols-2">
+                                    <div class="w-full md:w-2/3">
+                                        <div class="grid grid-cols-2 md:grid-cols-4 gap-x-2 gap-y-3">
                                             <!-- Top row: Odds, Current EV, Time Left, Bet Size -->
                                             <!-- Odds -->
                                             <div>
@@ -337,24 +337,24 @@
                                             </div>
                                             
                                             <!-- Win Probability - Hidden on mobile -->
-                                            <div class="hidden sm:block">
+                                            <div class="hidden md:block">
                                                 <dt class="text-xs font-medium text-gray-500">Win Probability</dt>
                                                 <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.win_probability) if bet.win_probability else 'N/A' }}%</dd>
                                             </div>
                                             
                                             <!-- Market Probability - Hidden on mobile -->
-                                            <div class="hidden sm:block">
+                                            <div class="hidden md:block">
                                                 <dt class="text-xs font-medium text-gray-500">Market Probability</dt>
                                                 <dd class="text-sm font-medium text-gray-900">{{ "%.1f"|format(bet.market_implied_prob) if bet.market_implied_prob else 'N/A' }}%</dd>
                                             </div>
                                             
-                                            <!-- Parlay Button - Full width on mobile -->
+                                            <!-- Parlay Button - Mobile friendly placement -->
                                             {% if bet.grade and bet.grade.grade not in ['D', 'F'] and sportsbook_counts.get(bet.sportsbook, 0) > 1 %}
-                                            <div class="col-span-1 sm:col-span-1">
+                                            <div>
                                                 <dd class="mt-1">
                                                     <button 
                                                         onclick="loadParlayBets('{{ bet.sportsbook }}')"
-                                                        class="inline-flex items-center px-2 py-1.5 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors w-full sm:w-auto justify-center sm:justify-start"
+                                                        class="inline-flex items-center px-2 py-1.5 text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition-colors"
                                                         title="View other high-quality bets from {{ bet.sportsbook }} that could be parlayed with this bet"
                                                     >
                                                         <span class="mr-1">🎲</span> Parlay Options
@@ -364,6 +364,7 @@
                                                     </button>
                                                 </dd>
                                             </div>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -371,7 +372,7 @@
                                 <!-- Initial Details Section - More compact -->
                                 {% if bet.initial_odds or bet.initial_ev is not none or bet.first_seen %}
                                 <div class="bg-gray-50 p-2 mt-2 rounded border border-gray-200 text-xs">
-                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <div class="grid grid-cols-3 gap-2">
                                         {% if bet.first_seen %}
                                         <div class="text-gray-600 flex items-center">
                                             <span class="text-gray-500 mr-1">⏱️</span> 

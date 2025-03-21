@@ -26,12 +26,20 @@
                     {% if summary_stats.latest_timestamp %}
                         {% if summary_stats.latest_timestamp is string %}
                             {% if 'T' in summary_stats.latest_timestamp %}
-                                {{ summary_stats.latest_timestamp.replace('T', ' ').split('.')[0] }}
+                                {% set datetime_parts = summary_stats.latest_timestamp.replace('T', ' ').split('.')[0].split(' ') %}
+                                {% set date_part = datetime_parts[0].split('-') %}
+                                {% set time_part = datetime_parts[1].split(':') %}
+                                {% set hour = time_part[0]|int %}
+                                {% set minute = time_part[1] %}
+                                {% set am_pm = 'AM' if hour < 12 else 'PM' %}
+                                {% set display_hour = hour if hour <= 12 else hour - 12 %}
+                                {% set display_hour = 12 if display_hour == 0 else display_hour %}
+                                {{ date_part[1] }}/{{ date_part[2] }} {{ display_hour }}:{{ minute }} {{ am_pm }}
                             {% else %}
                                 {{ summary_stats.latest_timestamp }}
                             {% endif %}
                         {% else %}
-                            {{ summary_stats.latest_timestamp.strftime('%b %d, %Y %I:%M %p') }}
+                            {{ summary_stats.latest_timestamp.strftime('%m/%d %I:%M %p') }}
                         {% endif %}
                     {% else %}
                         No data available

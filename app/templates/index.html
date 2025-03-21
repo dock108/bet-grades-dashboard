@@ -54,101 +54,74 @@
         </div>
     </div>
 
-    <!-- Main Content Grid -->
-    <div class="grid grid-cols-12 gap-6">
-        <!-- Left Column - Stats -->
-        <div class="col-span-12 lg:col-span-3 space-y-6">
-            <!-- Summary Stats Cards -->
-            <div class="bg-white shadow-sm rounded-lg p-6 space-y-6">
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <span class="text-xl mr-2">📊</span>
-                                <dt class="text-sm font-medium text-gray-500">Current Opportunities</dt>
-                            </div>
-                            <dd class="text-lg font-semibold text-gray-900">{{ summary_stats.total_bets }}</dd>
-                        </div>
+    <!-- Quick Stats Section -->
+    <div class="bg-white shadow-sm rounded-lg p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Current Opportunities -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <div class="flex flex-col items-center justify-center text-center">
+                    <span class="text-xl mb-1">📊</span>
+                    <h3 class="text-sm font-medium text-gray-500 mb-1">Current Opportunities</h3>
+                    <span class="text-lg font-semibold text-gray-900">{{ summary_stats.total_bets }}</span>
+                </div>
+            </div>
 
-                        <!-- Grade Distribution -->
-                        <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                            <div class="px-4 py-5 sm:p-6">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Grade Distribution</h3>
-                                <div class="mt-5 grid grid-cols-5 gap-4">
-                                    <div class="flex flex-col items-center">
-                                        <span class="text-xs font-medium text-gray-500">A</span>
-                                        <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.A if summary_stats.grade_distribution else 0 }}</span>
-                                    </div>
-                                    <div class="flex flex-col items-center">
-                                        <span class="text-xs font-medium text-gray-500">B</span>
-                                        <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.B if summary_stats.grade_distribution else 0 }}</span>
-                                    </div>
-                                    <div class="flex flex-col items-center">
-                                        <span class="text-xs font-medium text-gray-500">C</span>
-                                        <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.C if summary_stats.grade_distribution else 0 }}</span>
-                                    </div>
-                                    <div class="flex flex-col items-center">
-                                        <span class="text-xs font-medium text-gray-500">D</span>
-                                        <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.grade_distribution.D if summary_stats.grade_distribution else 0 }}</span>
-                                    </div>
-                                    <div class="flex flex-col items-center">
-                                        <span class="text-xs font-medium text-gray-500">F</span>
-                                        <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.F if summary_stats.grade_distribution else 0 }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Grade Distribution -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <h3 class="text-sm font-medium text-gray-500 mb-3">Grade Distribution</h3>
+                <div class="grid grid-cols-5 gap-4">
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">A</span>
+                        <span class="text-sm font-semibold text-green-600">{{ summary_stats.grade_distribution.A if summary_stats.grade_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">B</span>
+                        <span class="text-sm font-semibold text-blue-600">{{ summary_stats.grade_distribution.B if summary_stats.grade_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">C</span>
+                        <span class="text-sm font-semibold text-purple-600">{{ summary_stats.grade_distribution.C if summary_stats.grade_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">D</span>
+                        <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.grade_distribution.D if summary_stats.grade_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">F</span>
+                        <span class="text-sm font-semibold text-red-600">{{ summary_stats.grade_distribution.F if summary_stats.grade_distribution else 0 }}</span>
                     </div>
                 </div>
+            </div>
 
-                <!-- Sportsbook Distribution Card -->
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Sportsbook Distribution</h3>
-                        <div class="mt-5 space-y-3">
-                            {% if summary_stats.sportsbook_distribution %}
-                                {% for sportsbook, count in summary_stats.sportsbook_distribution.items()|sort(attribute='1', reverse=True) %}
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-500">{{ sportsbook }}</span>
-                                    <span class="text-sm font-semibold text-gray-900">{{ count }}</span>
-                                </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="text-sm text-gray-500">No data available</div>
-                            {% endif %}
-                        </div>
+            <!-- Time to Event -->
+            <div class="bg-white p-4 rounded-lg border border-gray-200">
+                <h3 class="text-sm font-medium text-gray-500 mb-3">Time to Event</h3>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">0-3h</span>
+                        <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate + summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
                     </div>
-                </div>
-
-                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
-                    <div class="px-4 py-5 sm:p-6">
-                        <h3 class="text-lg leading-6 font-medium text-gray-900">Time to Event</h3>
-                        <div class="mt-5 space-y-3">
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-500">0-3 hours</span>
-                                <span class="text-sm font-semibold text-red-600">{{ summary_stats.time_distribution.Immediate + summary_stats.time_distribution.VeryUrgent if summary_stats.time_distribution else 0 }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-500">3-6 hours</span>
-                                <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-500">6-12 hours</span>
-                                <span class="text-sm font-semibold text-purple-600">{{ summary_stats.time_distribution.Monitor if summary_stats.time_distribution else 0 }}</span>
-                            </div>
-                            <div class="flex justify-between items-center">
-                                <span class="text-sm font-medium text-gray-500">12+ hours</span>
-                                <span class="text-sm font-semibold text-blue-600">{{ summary_stats.time_distribution.Plan if summary_stats.time_distribution else 0 }}</span>
-                            </div>
-                        </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">3-6h</span>
+                        <span class="text-sm font-semibold text-yellow-600">{{ summary_stats.time_distribution.Urgent if summary_stats.time_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">6-12h</span>
+                        <span class="text-sm font-semibold text-purple-600">{{ summary_stats.time_distribution.Monitor if summary_stats.time_distribution else 0 }}</span>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <span class="text-xs font-medium text-gray-500">12h+</span>
+                        <span class="text-sm font-semibold text-blue-600">{{ summary_stats.time_distribution.Plan if summary_stats.time_distribution else 0 }}</span>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Right Column - Betting Opportunities -->
-        <div class="col-span-12 lg:col-span-9">
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-12 gap-6">
+        <!-- Betting Opportunities -->
+        <div class="col-span-12">
             <div class="bg-white shadow-sm rounded-lg divide-y divide-gray-200">
                 {% for bet in current_bets %}
                 <div class="p-3 opportunity-row relative">
@@ -399,27 +372,11 @@
                                 <!-- Initial Details Section - More compact -->
                                 {% if bet.initial_odds or bet.initial_ev is not none or bet.first_seen %}
                                 <div class="bg-gray-50 p-2 mt-2 rounded border border-gray-200 text-xs">
-                                    <div class="grid grid-cols-4 gap-2">
-                                        <div class="font-medium text-gray-600">Initial Details</div>
-                                        
-                                        {% if bet.initial_ev is not none %}
-                                        <div class="text-gray-600">EV: {{ "%.2f"|format(bet.initial_ev) }}%</div>
-                                        {% endif %}
-                                        
-                                        {% if bet.initial_odds %}
-                                        <div class="text-gray-600">Odds: {% if bet.initial_odds is string %}
-                                                {% if bet.initial_odds.startswith('-') %}
-                                                    {{ bet.initial_odds.split('.')[0] }}
-                                                {% else %}
-                                                    +{{ bet.initial_odds.lstrip('+').split('.')[0] }}
-                                                {% endif %}
-                                              {% else %}
-                                                {% if bet.initial_odds > 0 %}+{% endif %}{{ bet.initial_odds|int }}
-                                              {% endif %}</div>
-                                        {% endif %}
-                                        
+                                    <div class="grid grid-cols-3 gap-2">
                                         {% if bet.first_seen %}
-                                        <div class="text-gray-600">First seen: 
+                                        <div class="text-gray-600 flex items-center">
+                                            <span class="text-gray-500 mr-1">⏱️</span> 
+                                            <span>{{ 'First seen: ' }}
                                             {% if bet.first_seen is string %}
                                                 {% if 'T' in bet.first_seen %}
                                                     {% set datetime_parts = bet.first_seen.replace('T', ' ').split('.')[0].split(' ') %}
@@ -437,6 +394,29 @@
                                             {% else %}
                                                 {{ bet.first_seen.strftime('%m/%d %I:%M %p') }}
                                             {% endif %}
+                                            </span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if bet.initial_odds %}
+                                        <div class="text-gray-600 flex items-center">
+                                            <span class="text-gray-500 mr-1">🔢</span>
+                                            <span>{{ 'Initial odds: ' }}{% if bet.initial_odds is string %}
+                                                {% if bet.initial_odds.startswith('-') %}
+                                                    {{ bet.initial_odds.split('.')[0] }}
+                                                {% else %}
+                                                    +{{ bet.initial_odds.lstrip('+').split('.')[0] }}
+                                                {% endif %}
+                                              {% else %}
+                                                {% if bet.initial_odds > 0 %}+{% endif %}{{ bet.initial_odds|int }}
+                                              {% endif %}</span>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if bet.initial_ev is not none %}
+                                        <div class="text-gray-600 flex items-center">
+                                            <span class="text-gray-500 mr-1">📈</span>
+                                            <span>{{ 'Initial EV: ' }}{{ "%.2f"|format(bet.initial_ev) }}%</span>
                                         </div>
                                         {% endif %}
                                     </div>

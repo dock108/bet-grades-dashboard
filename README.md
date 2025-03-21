@@ -6,6 +6,7 @@ A Flask web application for tracking and analyzing betting opportunities with a 
 
 - Dashboard for viewing active betting opportunities
 - Comprehensive grading system (A-F) for betting opportunities
+- Quick Stats section showing Current Opportunities, Grade Distribution, and Time to Event
 - Initial bet details tracking for historical analysis and trend indicators
 - Time-to-event color coding:
   - Red: 0-3 hours
@@ -13,7 +14,7 @@ A Flask web application for tracking and analyzing betting opportunities with a 
   - Purple: 6-12 hours
   - Blue: 12+ hours
 - Sportsbook distribution tracking
-- Trend indicators showing changes in odds and EV
+- Trend indicators showing changes in odds and EV since first seen
 - Explainer page with detailed information about the grading system
 - Parlay calculator for multi-leg bets
 
@@ -103,6 +104,7 @@ The application will be available at http://localhost:5000.
 ## API Endpoints
 
 - `/api/sportsbook/<sportsbook>`: Get active bets for a specific sportsbook
+- `/api/calculate_parlay`: Calculate parlay odds, probability, and EV for selected bets
 
 ## Grading System
 
@@ -121,13 +123,12 @@ The grading system incorporates:
 5. Trend indicators (EV and odds changes)
 
 The dashboard uses trend indicators to show how odds and EV have changed since the bet was first seen:
-- Green arrows (↑) indicate improving conditions
-- Red arrows (↓) indicate worsening conditions
-- Grey hyphen (-) indicates no significant change
+- Green arrows (↑, ↑↑, ↑↑↑) indicate improving conditions (more arrows = bigger improvement)
+- Red arrows (↓, ↓↓, ↓↓↓) indicate worsening conditions (more arrows = bigger decline)
 
 The Initial Details section of each bet card provides historical context by showing:
-- Initial EV - the EV% when the bet was first discovered
-- Initial Odds - the opening odds offered by the sportsbook
 - First seen - when the betting opportunity was first identified
+- Initial odds - the opening odds offered by the sportsbook
+- Initial EV - the EV% when the bet was first discovered
 
 See the Explainer page for more details on the grading methodology.

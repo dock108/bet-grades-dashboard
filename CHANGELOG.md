@@ -5,6 +5,20 @@ All notable changes to the Grade Dashboard project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2025-03-21
+
+### Changed
+- Redesigned the Quick Stats section and moved it above betting cards
+  - Consolidated into a 3-column grid layout with Current Opportunities, Grade Distribution, and Time to Event
+  - Removed the Sportsbook Distribution from the Quick Stats (available via Parlay Options)
+  - Made Time to Event display match the Grade Distribution style
+- Improved the Initial Details section at the bottom of bet cards:
+  - Removed "Initial Details" label
+  - Reordered items to: First seen, Initial Odds, Initial EV
+  - Added icons to each item for better visual distinction
+  - Improved spacing and layout
+- Updated "Last Updated" timestamp format in the header to match the "First Seen" format for consistency
+
 ## [1.1.2] - 2025-03-20
 
 ### Changed

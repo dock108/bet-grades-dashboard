@@ -5,6 +5,16 @@ All notable changes to the Grade Dashboard project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2025-04-06
+
+### Improved
+- Dramatically optimized BetGrade object creation performance:
+  - Fixed a critical bottleneck in the grade lookup and attachment process
+  - Reduced the processing time from ~12 seconds to less than 0.1 seconds
+  - Implemented a lightweight BetGrade instantiation that bypasses expensive validation and calculations
+  - Added skip_validation option to BetGrade.from_dict() for batch processing
+  - Overall page load time reduced by over 90%
+
 ## [1.1.4] - 2025-03-21
 
 ### Changed

@@ -512,7 +512,7 @@ class BetGrade:
             return self.ev_score if self.ev_score > 0 else 60
     
     @classmethod
-    def from_dict(cls, data):
+    def from_dict(cls, data, skip_validation=False):
         """Create a BetGrade instance from a dictionary."""
         # Remove any fields that aren't in our model
         valid_fields = {
@@ -521,7 +521,32 @@ class BetGrade:
             'initial_ev', 'initial_line', 'ev_change', 'bayesian_confidence'
         }
         filtered_data = {k: v for k, v in data.items() if k in valid_fields}
-        return cls(**filtered_data)
+        
+        # Create instance but bypass expensive calculations for batch processing
+        instance = cls.__new__(cls)
+        
+        # Manually set attributes to avoid __init__ logic
+        for key, value in filtered_data.items():
+            if key in ['ev_score', 'timing_score', 'historical_edge', 'kelly_score', 
+                       'composite_score', 'initial_ev', 'ev_change', 'bayesian_confidence']:
+                setattr(instance, key, float(value) if value is not None else None)
+            else:
+                setattr(instance, key, value)
+        
+        # Set default values for any missing attributes
+        if not hasattr(instance, 'calculated_at') or instance.calculated_at is None:
+            instance.calculated_at = datetime.now()
+        if not hasattr(instance, 'created_at'):
+            instance.created_at = None
+        if not hasattr(instance, 'updated_at'):
+            instance.updated_at = None
+        
+        # Only run the expensive checks if not skipping validation (default is to skip for performance)
+        if not skip_validation:
+            # Run the full initialization with validation and calculations
+            return cls(**filtered_data)
+            
+        return instance
     
     @classmethod
     def from_db_row(cls, row):

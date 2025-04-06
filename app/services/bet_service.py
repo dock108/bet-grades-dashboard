@@ -174,11 +174,15 @@ class BettingService:
                 
                 logger.info(f"Created grade lookup with {len(grade_lookup)} entries after filtering to most recent")
                 
-                # Attach grades to bets
+                # Pre-compute all BetGrade objects in a batch
+                grade_objects = {}
+                for bet_id, row in grade_lookup.items():
+                    grade_objects[bet_id] = BetGrade.from_dict(row, skip_validation=True)
+                
+                # Attach grades to bets (now using pre-computed objects)
                 for bet in bets:
-                    if bet.bet_id in grade_lookup:
-                        # Only create BetGrade object when attaching to bet
-                        bet.grade = BetGrade.from_dict(grade_lookup[bet.bet_id])
+                    if bet.bet_id in grade_objects:
+                        bet.grade = grade_objects[bet.bet_id]
                     else:
                         bet.grade = None
                 logger.info(f"get_active_bets: grade lookup and attachment - {time.time() - grade_lookup_start:.2f}s")
@@ -361,11 +365,15 @@ class BettingService:
                 
                 logger.info(f"Created grade lookup with {len(grade_lookup)} entries after filtering to most recent")
                 
+                # Pre-compute all BetGrade objects in a batch
+                grade_objects = {}
+                for bet_id, row in grade_lookup.items():
+                    grade_objects[bet_id] = BetGrade.from_dict(row, skip_validation=True)
+                
                 # Attach grades to bets
                 for bet in bets:
-                    if bet.bet_id in grade_lookup:
-                        # Only create BetGrade object when attaching to bet
-                        bet.grade = BetGrade.from_dict(grade_lookup[bet.bet_id])
+                    if bet.bet_id in grade_objects:
+                        bet.grade = grade_objects[bet.bet_id]
                     else:
                         bet.grade = None
                 
@@ -494,11 +502,15 @@ class BettingService:
             
             logger.info(f"Created grade lookup with {len(grade_lookup)} entries after filtering to most recent")
             
-            # Convert to list of BetGrade objects
+            # Convert to list of BetGrade objects - use batch processing
             result = []
+            # Pre-compute all BetGrade objects at once
+            grade_objects = {bet_id: BetGrade.from_dict(row, skip_validation=True) for bet_id, row in grade_lookup.items()}
+            
+            # Add to result in original order
             for bet_id in bet_ids:
-                if bet_id in grade_lookup:
-                    result.append(BetGrade.from_dict(grade_lookup[bet_id]))
+                if bet_id in grade_objects:
+                    result.append(grade_objects[bet_id])
             
             logger.info(f"get_grades_by_bet_ids: processing - {time.time() - processing_start:.2f}s")
             logger.info(f"get_grades_by_bet_ids: total execution time - {time.time() - start_time:.2f}s")
